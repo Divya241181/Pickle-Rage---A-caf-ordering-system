@@ -1,4 +1,62 @@
-from fastapi import APIRouter, HTTPException
+import os
+
+base_dir = r'd:\Projects\Pickel Rage\picklerage-backend'
+
+payment_schema = '''from pydantic import BaseModel
+from datetime import datetime
+
+class PaymentCreate(BaseModel):
+    method: str
+    amount: float
+
+class PaymentResponse(BaseModel):
+    id: str
+    order_id: str
+    method: str
+    amount: float
+    paid_at: datetime
+'''
+with open(os.path.join(base_dir, 'schemas', 'payment.py'), 'w') as f: f.write(payment_schema)
+
+kitchen_router = '''from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from database import supabase
+
+router = APIRouter()
+
+class OrderStatusUpdate(BaseModel):
+    status: str
+
+@router.get("/orders")
+def get_kitchen_orders():
+    # Fetch orders that are not completed or cancelled, including their items
+    response = supabase.table("orders").select("*, order_items(*, menu_items(name))").neq("status", "completed").neq("status", "cancelled").execute()
+    
+    # Group by status
+    grouped = {
+        "pending": [],
+        "accepted": [],
+        "preparing": [],
+        "ready": [],
+        "served": []
+    }
+    for order in response.data:
+        status = order["status"]
+        if status in grouped:
+            grouped[status].append(order)
+            
+    return grouped
+
+@router.patch("/orders/{order_id}/status")
+def update_order_status(order_id: str, update: OrderStatusUpdate):
+    response = supabase.table("orders").update({"status": update.status}).eq("id", order_id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return response.data[0]
+'''
+with open(os.path.join(base_dir, 'routers', 'kitchen.py'), 'w') as f: f.write(kitchen_router)
+
+billing_router = '''from fastapi import APIRouter, HTTPException
 from database import supabase
 from schemas.payment import PaymentCreate, PaymentResponse
 
@@ -49,3 +107,6 @@ def complete_order(order_id: str):
                 supabase.table("tables").update({"status": "available"}).eq("id", table_id).execute()
                 
     return {"message": "Order marked as completed", "order": order}
+'''
+with open(os.path.join(base_dir, 'routers', 'billing.py'), 'w') as f: f.write(billing_router)
+print("Step 5 implemented.")
