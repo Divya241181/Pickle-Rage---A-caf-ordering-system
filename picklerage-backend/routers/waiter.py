@@ -23,3 +23,16 @@ def create_waiter_call(call: WaiterCallCreate):
         raise HTTPException(status_code=400, detail="Failed to create call")
         
     return new_call.data[0]
+
+@router.get("/calls")
+def get_waiter_calls():
+    # Fetch pending waiter calls with session and table info
+    response = supabase.table("waiter_calls").select("*, table_sessions(customer_name, tables(table_number))").eq("status", "pending").execute()
+    return response.data
+
+@router.patch("/calls/{call_id}/acknowledge")
+def acknowledge_waiter_call(call_id: str):
+    response = supabase.table("waiter_calls").update({"status": "acknowledged"}).eq("id", call_id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Call not found")
+    return response.data[0]
