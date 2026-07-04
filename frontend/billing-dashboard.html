@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Picklerage - Billing Counter</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#95d4b3",
+                        "on-secondary-fixed-variant": "#683d00",
+                        "on-error": "#ffffff",
+                        "background": "#fff8f2",
+                        "secondary-container": "#fd9d1a",
+                        "primary-container": "#2d6a4f",
+                        "outline-variant": "#bfc9c1",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1d1b18",
+                        "on-tertiary-fixed": "#390b0e",
+                        "inverse-on-surface": "#f6f0ea",
+                        "on-tertiary-fixed-variant": "#6f3537",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#33302c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#0e5138",
+                        "surface-container-highest": "#e8e1db",
+                        "surface-container-high": "#ede7e1",
+                        "outline": "#707973",
+                        "secondary": "#895100",
+                        "primary": "#0f5238",
+                        "surface": "#fff8f2",
+                        "secondary-fixed": "#ffdcbc",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8e7c5",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "on-secondary-container": "#663b00",
+                        "tertiary": "#713638",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#ffb86b",
+                        "tertiary-fixed": "#ffdad9",
+                        "surface-tint": "#2c694e",
+                        "on-tertiary-container": "#ffcfce",
+                        "on-secondary-fixed": "#2c1700",
+                        "surface-container": "#f3ede7",
+                        "on-primary-fixed": "#002114",
+                        "inverse-primary": "#95d4b3",
+                        "tertiary-container": "#8d4d4e",
+                        "surface-variant": "#e8e1db",
+                        "on-background": "#1d1b18",
+                        "on-surface-variant": "#404943",
+                        "surface-bright": "#fff8f2",
+                        "primary-fixed": "#b1f0ce",
+                        "surface-dim": "#dfd9d3",
+                        "surface-container-low": "#f9f2ec"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "lg": "24px",
+                        "gutter": "12px",
+                        "xs": "4px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.5); }
+        .soft-shadow { box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04); }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e8e1db; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bfc9c1; }
+    </style>
+</head>
+<body class="bg-surface h-screen overflow-hidden flex flex-col md:flex-row text-on-surface">
+<!-- Mobile TopBar (Hidden on Desktop) -->
+<div class="md:hidden sticky top-0 z-50 flex justify-between items-center w-full px-lg py-sm bg-surface/90 backdrop-blur-md shadow-sm border-b border-outline-variant">
+<div class="font-headline-md font-bold text-primary">Picklerage</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+</div>
+</div>
+<!-- Left Sidebar (~220px) - Hidden on Mobile -->
+<aside class="hidden md:flex flex-col h-full w-[220px] bg-surface-container-low border-r border-outline-variant flex-shrink-0">
+<div class="p-lg border-b border-outline-variant">
+<h1 class="font-headline-md text-primary font-bold tracking-tight">Picklerage</h1>
+<p class="font-label-md text-on-surface-variant mt-xs">Billing Counter</p>
+</div>
+<nav class="flex-1 overflow-y-auto py-md px-sm space-y-xs">
+<a class="flex items-center gap-md bg-primary-container text-on-primary-container rounded-lg px-md py-sm scale-98 transition-transform font-label-md" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                All Orders
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined">fiber_new</span>
+                New
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined">skillet</span>
+                Preparing
+            </a>
+<a class="flex items-center justify-between text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-colors font-label-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">room_service</span>
+                    Ready
+                </div>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full text-[10px] font-bold">2</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+                Completed
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined">cancel</span>
+                Cancelled
+            </a>
+<div class="mt-lg pt-md border-t border-outline-variant px-md">
+<p class="text-[11px] uppercase tracking-wider text-outline font-bold mb-sm">Today's Overview</p>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-on-surface-variant">Active</span>
+<span class="font-label-md text-on-surface">14</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-on-surface-variant">Sales</span>
+<span class="font-label-md text-primary">₹12,450</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-on-surface-variant">Pending</span>
+<span class="font-label-md text-secondary">₹1,240</span>
+</div>
+</div>
+</div>
+</nav>
+<div class="p-md border-t border-outline-variant flex items-center gap-md hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Terminal 1</p>
+<p class="text-[12px] text-on-surface-variant">Cashier: Rahul</p>
+</div>
+</div>
+</aside>
+<!-- Center Panel (~60%) -->
+<main class="flex-1 flex flex-col h-full bg-surface overflow-hidden relative">
+<!-- Header / Search -->
+<header class="p-md md:p-lg flex flex-col sm:flex-row gap-md justify-between items-start sm:items-center bg-surface z-10">
+<h2 class="font-headline-md text-on-surface hidden md:block">Active Orders</h2>
+<div class="flex items-center gap-sm w-full sm:w-auto">
+<div class="relative flex-1 sm:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 font-body-md text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search Order ID, Name..." type="text"/>
+</div>
+<button class="p-2 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</header>
+<!-- Horizontal Tabs (Mobile/Tablet) -->
+<div class="md:hidden px-md pb-md overflow-x-auto whitespace-nowrap hide-scrollbar flex gap-sm border-b border-outline-variant">
+<button class="px-4 py-1.5 bg-primary-container text-on-primary-container rounded-full font-label-md">All</button>
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant rounded-full font-label-md">New</button>
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant rounded-full font-label-md">Preparing</button>
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant rounded-full font-label-md">Ready</button>
+</div>
+<!-- Order List -->
+<div class="flex-1 overflow-y-auto p-md md:p-lg space-y-sm">
+<!-- Order Card 1: Highlighted (Ready & Pending) -->
+<div class="relative bg-surface-container-lowest rounded-xl border border-primary-fixed-dim soft-shadow p-md cursor-pointer transition-transform hover:-translate-y-1 overflow-hidden ring-1 ring-primary/20">
+<!-- Priority Strip (Red >20m) -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="flex justify-between items-start ml-sm">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-primary font-bold">#195</span>
+<span class="px-2 py-0.5 bg-surface-container-high rounded text-xs font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> Dine-in
+                        </span>
+<span class="font-label-md text-on-surface-variant border border-outline-variant rounded px-2">T-1</span>
+</div>
+<span class="font-headline-md text-on-surface">₹340</span>
+</div>
+<div class="mt-md flex justify-between items-end ml-sm">
+<div>
+<p class="font-body-md text-on-surface font-medium">Karan Mehta</p>
+<p class="text-sm text-on-surface-variant mt-xs">3 Items • 22m ago</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-primary-fixed rounded-full text-on-primary-fixed text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">room_service</span> Ready
+                        </span>
+<span class="px-3 py-1 bg-secondary-fixed rounded-full text-on-secondary-fixed text-xs font-bold">
+                            Pending
+                        </span>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Highlighted (Ready & Pending) Takeout -->
+<div class="relative bg-surface-container-lowest rounded-xl border border-primary-fixed-dim soft-shadow p-md cursor-pointer transition-transform hover:-translate-y-1 overflow-hidden">
+<!-- Priority Strip (Amber 10-20m) -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-container"></div>
+<div class="flex justify-between items-start ml-sm">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-primary font-bold">#197</span>
+<span class="px-2 py-0.5 bg-surface-container-high rounded text-xs font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">takeout_dining</span> Takeout
+                        </span>
+</div>
+<span class="font-headline-md text-on-surface">₹270</span>
+</div>
+<div class="mt-md flex justify-between items-end ml-sm">
+<div>
+<p class="font-body-md text-on-surface font-medium">Priya Shah</p>
+<p class="text-sm text-on-surface-variant mt-xs">2 Items • 18m ago</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-primary-fixed rounded-full text-on-primary-fixed text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">room_service</span> Ready
+                        </span>
+<span class="px-3 py-1 bg-secondary-fixed rounded-full text-on-secondary-fixed text-xs font-bold">
+                            Pending
+                        </span>
+</div>
+</div>
+</div>
+<!-- Order Card 3: Preparing -->
+<div class="relative bg-surface-container-lowest rounded-xl border border-outline-variant soft-shadow p-md cursor-pointer opacity-80 hover:opacity-100 transition-opacity overflow-hidden">
+<!-- Priority Strip (Amber 10-20m) -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-container"></div>
+<div class="flex justify-between items-start ml-sm">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-on-surface font-bold">#198</span>
+<span class="px-2 py-0.5 bg-surface-container-high rounded text-xs font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> Dine-in
+                        </span>
+<span class="font-label-md text-on-surface-variant border border-outline-variant rounded px-2">T-7</span>
+</div>
+<span class="font-headline-md text-on-surface">₹340</span>
+</div>
+<div class="mt-md flex justify-between items-end ml-sm">
+<div>
+<p class="font-body-md text-on-surface font-medium">Amit Verma</p>
+<p class="text-sm text-on-surface-variant mt-xs">4 Items • 14m ago</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-surface-variant rounded-full text-on-surface-variant text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">skillet</span> Preparing
+                        </span>
+</div>
+</div>
+</div>
+<!-- Order Card 4: New -->
+<div class="relative bg-surface-container-lowest rounded-xl border border-outline-variant soft-shadow p-md cursor-pointer opacity-80 hover:opacity-100 transition-opacity overflow-hidden">
+<!-- Priority Strip (Green <10m) -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex justify-between items-start ml-sm">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-on-surface font-bold">#201</span>
+<span class="px-2 py-0.5 bg-surface-container-high rounded text-xs font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> Dine-in
+                        </span>
+<span class="font-label-md text-on-surface-variant border border-outline-variant rounded px-2">T-3</span>
+</div>
+<span class="font-headline-md text-on-surface">₹260</span>
+</div>
+<div class="mt-md flex justify-between items-end ml-sm">
+<div>
+<p class="font-body-md text-on-surface font-medium">Rahul Patel</p>
+<p class="text-sm text-on-surface-variant mt-xs">2 Items • 3m ago</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-surface-variant rounded-full text-on-surface-variant text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">fiber_new</span> New
+                        </span>
+</div>
+</div>
+</div>
+<div class="h-24"></div> <!-- Bottom padding for scrolling -->
+</div>
+</main>
+<!-- Right Panel: Order Detail (~320px) - Hidden on mobile unless active -->
+<aside class="hidden lg:flex flex-col w-[340px] bg-surface-container-lowest border-l border-outline-variant shadow-lg z-20 flex-shrink-0">
+<!-- Detail Header -->
+<div class="p-lg border-b border-outline-variant bg-surface">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-primary font-bold">Order #195</h3>
+<p class="font-body-md text-on-surface-variant mt-1">Karan Mehta</p>
+</div>
+<div class="text-right">
+<span class="font-headline-md text-on-surface">₹340</span>
+</div>
+</div>
+<div class="flex gap-sm mt-md">
+<span class="px-2 py-1 bg-surface-container-high rounded text-xs font-label-sm border border-outline-variant">Dine-in • Table 1</span>
+<span class="px-2 py-1 bg-primary-fixed rounded text-xs font-label-sm text-on-primary-fixed flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">timer</span> 22m elapsed</span>
+</div>
+</div>
+<!-- Order Items -->
+<div class="flex-1 overflow-y-auto p-lg">
+<h4 class="font-label-md text-outline uppercase tracking-wider mb-sm">Items</h4>
+<div class="space-y-md">
+<!-- Item row -->
+<div class="flex justify-between items-start border-b border-outline-variant pb-sm">
+<div class="flex-1">
+<p class="font-body-md text-on-surface font-medium">Classic Veg Burger</p>
+<p class="text-xs text-on-surface-variant">No onions</p>
+</div>
+<div class="text-right flex items-center gap-md">
+<span class="text-sm text-on-surface-variant">2 x ₹120</span>
+<span class="font-label-md text-on-surface w-12">₹240</span>
+</div>
+</div>
+<!-- Item row -->
+<div class="flex justify-between items-start border-b border-outline-variant pb-sm">
+<div class="flex-1">
+<p class="font-body-md text-on-surface font-medium">Masala Fries</p>
+</div>
+<div class="text-right flex items-center gap-md">
+<span class="text-sm text-on-surface-variant">1 x ₹100</span>
+<span class="font-label-md text-on-surface w-12">₹100</span>
+</div>
+</div>
+</div>
+<!-- Totals -->
+<div class="mt-lg pt-sm border-t-2 border-outline-variant border-dashed">
+<div class="flex justify-between text-sm text-on-surface-variant mb-1">
+<span>Subtotal</span>
+<span>₹340</span>
+</div>
+<div class="flex justify-between text-sm text-on-surface-variant mb-1">
+<span>Taxes (5%)</span>
+<span>₹17</span>
+</div>
+<div class="flex justify-between font-headline-md text-on-surface mt-sm">
+<span>Total</span>
+<span class="text-primary font-bold">₹357</span>
+</div>
+</div>
+</div>
+<!-- Payment Action Area -->
+<div class="p-lg bg-surface-container-low border-t border-outline-variant">
+<h4 class="font-label-md text-on-surface mb-sm">Payment Method</h4>
+<div class="grid grid-cols-2 gap-2 mb-md">
+<button class="py-2 px-2 border-2 border-primary bg-primary-fixed-dim/20 rounded-lg text-primary font-label-md flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">payments</span> UPI
+                </button>
+<button class="py-2 px-2 border border-outline-variant bg-surface rounded-lg text-on-surface-variant font-label-md flex items-center justify-center gap-1 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">money</span> Cash
+                </button>
+<button class="py-2 px-2 border border-outline-variant bg-surface rounded-lg text-on-surface-variant font-label-md flex items-center justify-center gap-1 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">credit_card</span> Card
+                </button>
+<button class="py-2 px-2 border border-outline-variant bg-surface rounded-lg text-on-surface-variant font-label-md flex items-center justify-center gap-1 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span> Other
+                </button>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-full font-label-md font-bold shadow-sm hover:scale-98 transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                Confirm Payment
+            </button>
+<div class="flex gap-2 mt-sm">
+<button class="flex-1 py-2 border border-outline-variant rounded-full text-on-surface-variant text-sm font-medium flex justify-center items-center gap-1 hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[16px]">print</span> Print
+                </button>
+<button class="flex-1 py-2 border border-outline-variant rounded-full text-on-surface-variant text-sm font-medium flex justify-center items-center gap-1 hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[16px]">download</span> PDF
+                </button>
+</div>
+</div>
+</aside>
+</body></html>

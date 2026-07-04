@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Picklerage Kitchen Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#0f1117",
+                        "inverse-primary": "#95d4b3",
+                        "tertiary-container": "#8d4d4e",
+                        "secondary-container": "#fd9d1a",
+                        "on-tertiary-fixed-variant": "#6f3537",
+                        "tertiary": "#713638",
+                        "surface-container-high": "#1e2128",
+                        "secondary": "#895100",
+                        "primary-container": "#2d6a4f",
+                        "secondary-fixed-dim": "#ffb86b",
+                        "on-tertiary-fixed": "#390b0e",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#1a1d24",
+                        "surface-container": "#15181e",
+                        "inverse-surface": "#33302c",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#002114",
+                        "primary-fixed-dim": "#95d4b3",
+                        "primary": "#0f5238",
+                        "on-background": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "tertiary-fixed": "#ffdad9",
+                        "surface-container-low": "#12141a",
+                        "secondary-fixed": "#ffdcbc",
+                        "on-secondary-fixed": "#2c1700",
+                        "surface-tint": "#2c694e",
+                        "surface-container-lowest": "#0a0c10",
+                        "on-surface": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#683d00",
+                        "on-secondary-container": "#663b00",
+                        "on-primary": "#ffffff",
+                        "background": "#0f1117",
+                        "on-tertiary-container": "#ffcfce",
+                        "surface-dim": "#0a0c10",
+                        "primary-fixed": "#b1f0ce",
+                        "surface-container-highest": "#282c34",
+                        "outline": "#707973",
+                        "outline-variant": "#3f4943",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#404943",
+                        "on-primary-container": "#a8e7c5",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#bfc9c1",
+                        "on-primary-fixed-variant": "#0e5138",
+                        "inverse-on-surface": "#f6f0ea",
+                        "order-new": "#3b82f6",
+                        "order-preparing": "#f59e0b",
+                        "order-ready": "#10b981",
+                        "order-completed": "#6b7280"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "gutter": "12px",
+                        "container-margin": "20px",
+                        "base": "4px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .animate-new-order {
+            animation: pulse-glow 2s infinite;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .order-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+        }
+        .order-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-full flex flex-col overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant/30 flex justify-between items-center px-lg py-sm z-50 shrink-0">
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md text-primary-fixed-dim leading-none">Picklerage</h1>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-widest text-[10px] mt-1">Kitchen Dashboard</span>
+</div>
+<div class="font-mono text-headline-md text-on-surface font-bold tracking-tighter" id="live-clock">
+            19:42:05
+        </div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs">
+<span class="flex items-center bg-blue-500/10 text-blue-400 px-md py-1 rounded-full font-label-md">
+<span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                    2 New
+                </span>
+<span class="flex items-center bg-amber-500/10 text-amber-400 px-md py-1 rounded-full font-label-md">
+<span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
+                    2 Preparing
+                </span>
+<span class="flex items-center bg-emerald-500/10 text-emerald-400 px-md py-1 rounded-full font-label-md">
+<span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                    1 Ready
+                </span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-surface-variant/20 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications_active">notifications_active</span>
+</button>
+</div>
+</header>
+<!-- Filter Bar -->
+<section class="bg-surface-container-low px-lg py-sm flex items-center justify-between gap-lg shrink-0">
+<div class="flex items-center gap-sm overflow-x-auto scrollbar-hide">
+<button class="bg-primary text-on-primary px-lg py-2 rounded-full font-label-md whitespace-nowrap">All</button>
+<button class="bg-surface-container-highest text-on-surface-variant hover:text-on-surface px-lg py-2 rounded-full font-label-md whitespace-nowrap transition-colors">Dine-in</button>
+<button class="bg-surface-container-highest text-on-surface-variant hover:text-on-surface px-lg py-2 rounded-full font-label-md whitespace-nowrap transition-colors">Takeout</button>
+<button class="bg-surface-container-highest text-on-surface-variant hover:text-on-surface px-lg py-2 rounded-full font-label-md whitespace-nowrap transition-colors">New</button>
+<button class="bg-surface-container-highest text-on-surface-variant hover:text-on-surface px-lg py-2 rounded-full font-label-md whitespace-nowrap transition-colors">Preparing</button>
+<button class="bg-surface-container-highest text-on-surface-variant hover:text-on-surface px-lg py-2 rounded-full font-label-md whitespace-nowrap transition-colors">Ready</button>
+</div>
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="search">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-full pl-12 pr-6 py-2.5 text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary-fixed-dim transition-all outline-none font-body-md" placeholder="Search by order ID, table, or name" type="text"/>
+</div>
+</section>
+<!-- Kanban Grid -->
+<main class="flex-1 overflow-hidden p-gutter">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter h-full">
+<!-- Column 1: New Orders -->
+<div class="flex flex-col h-full rounded-xl bg-surface-container/30 border border-blue-500/20">
+<div class="p-md flex items-center justify-between border-b border-blue-500/10">
+<h2 class="font-headline-md text-blue-400 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+                        New Orders
+                    </h2>
+<span class="bg-blue-500/20 text-blue-300 px-3 py-0.5 rounded-full text-sm font-bold">2</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md scrollbar-hide">
+<!-- Card #201 -->
+<div class="order-card animate-new-order bg-surface-container-high rounded-lg overflow-hidden relative border-l-4 border-emerald-500">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface">#201</span>
+<p class="text-on-surface-variant font-label-md">Table 3 • Rahul Patel</p>
+</div>
+<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Dine-in</span>
+</div>
+<div class="space-y-sm py-md border-y border-outline-variant/10">
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">2x</span>
+<span class="text-on-surface">Butter Naan</span>
+</div>
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Paneer Butter Masala</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-md">
+<span class="text-on-surface-variant text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+                                    3 min ago
+                                </span>
+<button class="h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold px-lg rounded-full transition-all active:scale-95">Start Preparing</button>
+</div>
+</div>
+</div>
+<!-- Card #202 -->
+<div class="order-card bg-surface-container-high rounded-lg overflow-hidden relative border-l-4 border-emerald-500">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface">#202</span>
+<p class="text-on-surface-variant font-label-md">Priya Shah</p>
+</div>
+<span class="bg-orange-500/10 text-orange-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Takeout</span>
+</div>
+<div class="space-y-sm py-md border-y border-outline-variant/10">
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Schezwan Fried Rice</span>
+</div>
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">2x</span>
+<span class="text-on-surface">Spring Rolls</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-md">
+<span class="text-on-surface-variant text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+                                    8 min ago
+                                </span>
+<button class="h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold px-lg rounded-full transition-all active:scale-95">Start Preparing</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: Preparing -->
+<div class="flex flex-col h-full rounded-xl bg-surface-container/30 border border-amber-500/20">
+<div class="p-md flex items-center justify-between border-b border-amber-500/10">
+<h2 class="font-headline-md text-amber-400 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+                        Preparing
+                    </h2>
+<span class="bg-amber-500/20 text-amber-300 px-3 py-0.5 rounded-full text-sm font-bold">2</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md scrollbar-hide">
+<!-- Card #198 -->
+<div class="order-card bg-surface-container-high rounded-lg overflow-hidden relative border-l-4 border-amber-500">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface">#198</span>
+<p class="text-on-surface-variant font-label-md">Table 7 • Amit Verma</p>
+</div>
+<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Dine-in</span>
+</div>
+<div class="space-y-sm py-md border-y border-outline-variant/10">
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Farm House Pizza</span>
+</div>
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Coke (500ml)</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-md">
+<span class="text-amber-400 text-sm flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+                                    14 min ago
+                                </span>
+<button class="h-12 bg-amber-600 hover:bg-amber-500 text-white font-bold px-lg rounded-full transition-all active:scale-95">Mark Ready</button>
+</div>
+</div>
+</div>
+<!-- Card #199 -->
+<div class="order-card bg-surface-container-high rounded-lg overflow-hidden relative border-l-4 border-amber-500">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface">#199</span>
+<p class="text-on-surface-variant font-label-md">Sneha Joshi</p>
+</div>
+<span class="bg-orange-500/10 text-orange-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Takeout</span>
+</div>
+<div class="space-y-sm py-md border-y border-outline-variant/10">
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">2x</span>
+<span class="text-on-surface">Veg Momos</span>
+</div>
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Thai Soup</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-md">
+<span class="text-amber-400 text-sm flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+                                    11 min ago
+                                </span>
+<button class="h-12 bg-amber-600 hover:bg-amber-500 text-white font-bold px-lg rounded-full transition-all active:scale-95">Mark Ready</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Ready -->
+<div class="flex flex-col h-full rounded-xl bg-surface-container/30 border border-emerald-500/20">
+<div class="p-md flex items-center justify-between border-b border-emerald-500/10">
+<h2 class="font-headline-md text-emerald-400 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                        Ready
+                    </h2>
+<span class="bg-emerald-500/20 text-emerald-300 px-3 py-0.5 rounded-full text-sm font-bold">1</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md scrollbar-hide">
+<!-- Card #195 -->
+<div class="order-card bg-surface-container-high rounded-lg overflow-hidden relative border-l-4 border-red-500">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface">#195</span>
+<p class="text-on-surface-variant font-label-md">Table 1 • Karan Mehta</p>
+</div>
+<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Dine-in</span>
+</div>
+<div class="space-y-sm py-md border-y border-outline-variant/10">
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">1x</span>
+<span class="text-on-surface">Pasta Arrabbiata</span>
+</div>
+<div class="flex items-center">
+<span class="font-mono text-primary-fixed-dim font-bold w-8">2x</span>
+<span class="text-on-surface">Garlic Bread</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-md">
+<span class="text-red-400 text-sm flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="warning">warning</span>
+                                    22 min ago
+                                </span>
+<span class="material-symbols-outlined text-emerald-500 text-4xl" data-icon="room_service" data-weight="fill" style="font-variation-settings: 'FILL' 1;">room_service</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 4: Completed -->
+<div class="flex flex-col h-full rounded-xl bg-surface-container/30 border border-outline-variant/20">
+<div class="p-md flex items-center justify-between border-b border-outline-variant/10">
+<h2 class="font-headline-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+                        Completed
+                    </h2>
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-0.5 rounded-full text-sm font-bold">History</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md scrollbar-hide">
+<!-- Card #190 -->
+<div class="order-card bg-surface-container-high/50 rounded-lg overflow-hidden relative border-l-4 border-gray-600 opacity-60 grayscale-[0.5]">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-mono text-headline-md text-on-surface-variant">#190</span>
+<p class="text-on-surface-variant font-label-md">Table 5 • Meera Nair</p>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Dine-in</span>
+</div>
+<div class="space-y-sm py-md">
+<p class="text-sm text-on-surface-variant italic">Order fully served and settled.</p>
+</div>
+<div class="flex items-center justify-between mt-sm border-t border-outline-variant/10 pt-sm">
+<span class="text-on-surface-variant text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="event_available">event_available</span>
+                                    Completed at 6:45 PM
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Update clock every second
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-GB', { hour12: false });
+            document.getElementById('live-clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Interaction logic for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('.material-symbols-outlined');
+                if (icon && icon.textContent === 'notifications_active') {
+                    icon.textContent = icon.textContent === 'notifications_active' ? 'notifications_off' : 'notifications_active';
+                }
+                
+                // Visual feedback
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 150);
+            });
+        });
+
+        // Simulate incoming order sound toggle
+        const soundBtn = document.querySelector('[data-icon="notifications_active"]').parentElement;
+        let isMuted = false;
+        soundBtn.onclick = () => {
+            isMuted = !isMuted;
+            const icon = soundBtn.querySelector('span');
+            icon.textContent = isMuted ? 'notifications_off' : 'notifications_active';
+            icon.style.color = isMuted ? 'var(--tw-color-error)' : 'inherit';
+        };
+    </script>
+</body></html>

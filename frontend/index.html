@@ -1,0 +1,340 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Picklerage | Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#683d00",
+                        "surface-tint": "#2c694e",
+                        "tertiary": "#713638",
+                        "on-tertiary-fixed-variant": "#6f3537",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1d1b18",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#bfc9c1",
+                        "background": "#fff8f2",
+                        "primary": "#0f5238",
+                        "surface-container-highest": "#e8e1db",
+                        "tertiary-fixed": "#ffdad9",
+                        "on-secondary-fixed": "#2c1700",
+                        "primary-container": "#2d6a4f",
+                        "surface-variant": "#e8e1db",
+                        "on-primary-fixed": "#002114",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#95d4b3",
+                        "on-primary-fixed-variant": "#0e5138",
+                        "surface-container": "#f3ede7",
+                        "on-surface-variant": "#404943",
+                        "surface-bright": "#fff8f2",
+                        "primary-fixed-dim": "#95d4b3",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f9f2ec",
+                        "outline": "#707973",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#ffcfce",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dfd9d3",
+                        "secondary-container": "#fd9d1a",
+                        "surface": "#fff8f2",
+                        "inverse-surface": "#33302c",
+                        "primary-fixed": "#b1f0ce",
+                        "secondary-fixed": "#ffdcbc",
+                        "inverse-on-surface": "#f6f0ea",
+                        "secondary": "#895100",
+                        "secondary-fixed-dim": "#ffb86b",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#390b0e",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "on-secondary-container": "#663b00",
+                        "on-surface": "#1d1b18",
+                        "surface-container-high": "#ede7e1",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#a8e7c5",
+                        "tertiary-container": "#8d4d4e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "container-margin": "20px",
+                        "base": "4px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-sm": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Hero Section -->
+<section class="relative h-[397px] w-full overflow-hidden">
+<div class="absolute inset-0 bg-black/50 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A high-end, close-up photograph of vibrant Thai street food, featuring sizzling noodles and fresh herbs on a rustic wooden table. The lighting is dramatic and moody with deep shadows and warm highlights, reflecting a premium bistro atmosphere. The color palette includes rich ochre, deep greens, and spicy reds, creating an appetizing and sophisticated visual experience." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBPh8E7cagkbcYypONTOlfdrChtpHJBkKS6NGQiCY36a6gi_rZehaf-OexpdNl1oPmy1DtovfTJm7Pu2qXRkIgPzqMcVmVzybJ2zSVY3LjA4fuW5bZi5YVsYfda9mgiJ1upe0t8Ctfgknoh24fpEG_Mi01JIBxvc2cbrtBQRJT2E63ZTxrLoJ9L1k9XlE5Bs6zC_tOoAgRm5EURwLrOgw4C5VGdtIBRhtpmsMivebdWg8so-9bmXEDFSwL9ylfEGPakoL38Ww7ZFRU')"></div>
+<div class="relative z-20 h-full flex flex-col justify-end px-container-margin pb-xl">
+<span class="inline-block bg-secondary-container text-on-secondary-container px-md py-xs rounded-full font-label-md text-label-md mb-sm w-max uppercase tracking-wider">DINE IN</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-white mb-xs tracking-tight">Picklerage</h1>
+<p class="text-white/80 font-body-md text-body-md mb-md">123 Street, City</p>
+<div class="flex items-center gap-sm">
+<span class="bg-white/20 backdrop-blur-md border border-white/30 text-white px-md py-sm rounded-full font-label-md text-label-md">Table-1</span>
+</div>
+</div>
+</section>
+<!-- Sticky Header (Visible after Hero) -->
+<header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-outline-variant/30 transform -translate-y-full transition-transform duration-300 px-container-margin py-sm hidden md:flex items-center justify-between" id="sticky-header">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md text-primary font-bold">Picklerage</span>
+<div class="flex items-center gap-xs bg-secondary-fixed text-on-secondary-fixed px-sm py-1 rounded-full text-label-sm">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span class="">Badge</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs text-primary-container font-label-md">
+<span class="bg-primary-container text-on-primary-container px-sm py-1 rounded-full text-label-sm">Placed 2</span>
+<button class="text-primary font-bold hover:underline">Details</button>
+</div>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-full font-label-md flex items-center gap-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined">person_raised_hand</span>
+<span class="">Waiter</span>
+</button>
+</div>
+</header>
+<!-- Content Wrapper -->
+<main class="relative z-30 -mt-lg rounded-t-lg bg-background min-h-screen pb-40">
+<!-- Search & Veg Toggle -->
+<div class="px-container-margin pt-xl pb-md">
+<div class="flex flex-col gap-md">
+<div class="relative flex items-center bg-surface-container-low rounded-xl px-md py-sm border border-outline-variant/20 focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search for dishes..." type="text">
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Veg only</span>
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-surface-container-highest transition-colors focus:outline-none" id="veg-toggle" role="switch">
+<span class="sr-only">Toggle veg only</span>
+<span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" id="veg-toggle-thumb"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Tabs -->
+<div class="sticky top-0 z-40 bg-background/95 backdrop-blur-md pt-sm pb-md border-b border-outline-variant/20">
+<div class="flex items-center px-container-margin gap-md overflow-x-auto hide-scrollbar">
+<button class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-surface-container-low text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-sm">
+<button class="whitespace-nowrap px-lg py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-md">Thai Street Flavor</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors">Korean Street Kitchen</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors">Chinese Favorites</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors">Italian Kitchen</button>
+</div>
+</div>
+</div>
+<!-- Menu List -->
+<div class="px-container-margin mt-lg space-y-gutter">
+<h2 class="font-headline-md text-headline-md text-on-surface-variant mb-md px-1">Thai Street Flavor</h2>
+<!-- Card 1 (Veg) -->
+<div class="bg-white rounded-lg p-md shadow-sm border border-outline-variant/10 flex gap-md relative overflow-hidden group active:scale-[0.98] transition-all">
+<div class="flex-1">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 border border-green-600 flex items-center justify-center rounded-sm">
+<div class="w-2 h-2 bg-green-600 rounded-full"></div>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-sm py-[2px] rounded-full text-[10px] font-bold uppercase tracking-tight">Popular</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Classic Pad Thai</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm mt-xs line-clamp-2">Rice noodles stir-fried with tofu, bean sprouts, peanuts, and our secret tamarind sauce.</p>
+<div class="mt-md flex items-center justify-between">
+<span class="font-bold text-on-surface-variant text-body-lg">₹245</span>
+<div class="flex items-center bg-primary-fixed/30 rounded-full p-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[18px]">remove</span></button>
+<span class="px-md font-bold text-primary">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[18px]">add</span></button>
+</div>
+</div>
+</div>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden relative shadow-inner">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A macro overhead shot of a beautifully plated Classic Pad Thai, showing the texture of rice noodles, crushed peanuts, and fresh lime wedges. The lighting is soft and natural, emphasizing the warm orange and gold tones of the dish. The background is a clean white marble, fitting the modern bistro aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBquIXE4QoAH2rx92sh5IqXbhkt-6Kq09xdfWSCbp8M4Ab24gAjvcQbHVVOZ1VhXTYTnQHH8wpMOlIGHbwdEfTyFpK_MDNo-APogYOSdZ0iAo_2VgWl0rpCp6yfXYDCA5BMe2vpTs4ufEiTTD_W0SYm409BvOGF3fF_pXUpUKfK_KFQr0okdtwBnilsot_-ZJXagwfD1x5W14kzMiliBy3RIyqbPMPwT0UxTwQsaxXu3CkFT-XkAOD6WlT9EPUyE_0w6KYypvfa1wk')"></div>
+</div>
+</div>
+<!-- Card 2 (Non-Veg) -->
+<div class="bg-white rounded-lg p-md shadow-sm border border-outline-variant/10 flex gap-md relative group active:scale-[0.98] transition-all">
+<div class="flex-1">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 border border-red-600 flex items-center justify-center rounded-sm">
+<div class="w-2 h-2 bg-red-600 rounded-full"></div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Red Curry Prawns</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm mt-xs line-clamp-2">Succulent prawns in a creamy coconut red curry with kaffir lime leaves and Thai basil.</p>
+<div class="mt-md flex items-center justify-between">
+<span class="font-bold text-on-surface-variant text-body-lg">₹485</span>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-full font-label-md shadow-sm hover:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden relative shadow-inner">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A vivid, colorful presentation of Red Curry Prawns in a traditional ceramic bowl. The prawns are large and coated in a rich, glossy red sauce, garnished with bright green basil leaves. The lighting is bright and appetizing, highlighting the creamy texture of the coconut milk. The composition is artistic and centers the fresh seafood as the hero." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChg_8PdGKyJvi4AZ2rlgsmaxCsQB7yVmobnufcfGOUgWIpWVaAsv-_bdOvFh_WLc-5IbqHx7QdC18UUvOQ5hw7fYJy3WI0VwBvSLfe47Am7eD_xExpx8Fw1fTtkPxxPZepqpl1BQmsRNL3E6khC0eeYRBUA3QQ259QoppjJ_aWtviEpF5xIQ8AyM08WIsm0AHObdVlw4t5dxA0Qin4gIyBhcwMyTWIpwwCs3MH4FV2KZMLWHITQwq3HboR9WUpvSCciu2l6cmONPk')"></div>
+</div>
+</div>
+<!-- Card 3 (Non-Veg) -->
+<div class="bg-white rounded-lg p-md shadow-sm border border-outline-variant/10 flex gap-md relative group active:scale-[0.98] transition-all">
+<div class="flex-1">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 border border-red-600 flex items-center justify-center rounded-sm">
+<div class="w-2 h-2 bg-red-600 rounded-full"></div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Basil Chili Chicken</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm mt-xs line-clamp-2">Minced chicken sautéed with fresh chilies, garlic, and holy basil leaves. Served with spicy dip.</p>
+<div class="mt-md flex items-center justify-between">
+<span class="font-bold text-on-surface-variant text-body-lg">₹320</span>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-full font-label-md shadow-sm hover:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden relative shadow-inner">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A high-contrast food photo of Basil Chili Chicken, featuring finely minced meat tossed with vibrant red chilies and dark green basil. Steam rises subtly from the dish, suggesting it's served hot and fresh. The lighting is focused and warm, enhancing the rich brown and emerald colors of the stir-fry." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBYB6B41VhH4NtiQjJZCK4BBvT8fxVuWk2Jpyhaa47tifOoiyn9EA92vFH9_ESCoy8_qlXnHrSef5a_NIZOs1l6B5VCDoZpWoNBHvUncd9vC-Y1HHa6er_ScPZLax8v66Yu2cQkW4pVEmqhnr-0V-0_pkB-hLZ3lBs3tNjwzsbgBxksLt8xwyc3HN-dV5uQjWv8pQEPUX6Xxv4b2xZWEJev85YmAPlP4HkaBvvZhDml1LLaQyvn0YuDPO2f2fos3cdMnbCBoJsWbbQ')"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Cart & Bottom Nav Cluster -->
+<div class="fixed bottom-0 left-0 right-0 z-50 px-container-margin pb-safe pt-md">
+<!-- Cart Pill -->
+<div class="mb-sm flex justify-center animate-slide-up">
+<div class="flex items-center justify-between w-full max-w-md bg-surface-container-high/90 backdrop-blur-md border border-outline-variant/30 p-2 rounded-full shadow-lg">
+  <div class="flex items-center gap-md px-lg">
+    <div class="flex flex-col">
+      <span class="text-label-sm font-label-md text-on-surface-variant uppercase tracking-wider">2 Items</span>
+      <span class="text-headline-md font-bold text-on-surface">₹450</span>
+    </div>
+  </div>
+  <button class="bg-primary text-on-primary px-xl py-md rounded-full font-bold flex items-center gap-sm shadow-md active:scale-95 transition-transform">
+    <span class="">Place Order</span>
+    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+  </button>
+</div>
+</div>
+<!-- Bottom Navigation Shell -->
+<nav class="bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 flex justify-around items-center py-sm rounded-t-xl shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-sm text-label-sm">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person_raised_hand</span>
+<span class="font-label-sm text-label-sm">Call Waiter</span>
+</a>
+</nav>
+</div>
+<!-- Scripts for micro-interactions -->
+<script>
+        const header = document.getElementById('sticky-header');
+        const vegToggle = document.getElementById('veg-toggle');
+        const vegThumb = document.getElementById('veg-toggle-thumb');
+        let isVegOnly = false;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                header.classList.remove('-translate-y-full', 'hidden');
+                header.classList.add('translate-y-0', 'flex');
+            } else {
+                header.classList.add('-translate-y-full');
+                header.classList.remove('translate-y-0');
+            }
+        });
+
+        vegToggle.addEventListener('click', () => {
+            isVegOnly = !isVegOnly;
+            if (isVegOnly) {
+                vegToggle.classList.remove('bg-surface-container-highest');
+                vegToggle.classList.add('bg-primary');
+                vegThumb.classList.add('translate-x-6');
+                vegThumb.classList.remove('translate-x-1');
+            } else {
+                vegToggle.classList.add('bg-surface-container-highest');
+                vegToggle.classList.remove('bg-primary');
+                vegThumb.classList.remove('translate-x-6');
+                vegThumb.classList.add('translate-x-1');
+            }
+        });
+
+        // Simple button active state simulation
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => btn.classList.add('scale-95'));
+            btn.addEventListener('touchend', () => btn.classList.remove('scale-95'));
+        });
+    </script>
+
+
+</body></html>

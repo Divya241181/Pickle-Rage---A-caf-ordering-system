@@ -1,0 +1,428 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Picklerage - Checkout &amp; Modals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bottom-sheet-transition {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .sheet-hidden {
+            transform: translateY(100%);
+        }
+        .sheet-visible {
+            transform: translateY(0%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#683d00",
+                        "surface-tint": "#2c694e",
+                        "tertiary": "#713638",
+                        "on-tertiary-fixed-variant": "#6f3537",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1d1b18",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#bfc9c1",
+                        "background": "#fff8f2",
+                        "primary": "#0f5238",
+                        "surface-container-highest": "#e8e1db",
+                        "tertiary-fixed": "#ffdad9",
+                        "on-secondary-fixed": "#2c1700",
+                        "primary-container": "#2d6a4f",
+                        "surface-variant": "#e8e1db",
+                        "on-primary-fixed": "#002114",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#95d4b3",
+                        "on-primary-fixed-variant": "#0e5138",
+                        "surface-container": "#f3ede7",
+                        "on-surface-variant": "#404943",
+                        "surface-bright": "#fff8f2",
+                        "primary-fixed-dim": "#95d4b3",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f9f2ec",
+                        "outline": "#707973",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#ffcfce",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dfd9d3",
+                        "secondary-container": "#fd9d1a",
+                        "surface": "#fff8f2",
+                        "inverse-surface": "#33302c",
+                        "primary-fixed": "#b1f0ce",
+                        "secondary-fixed": "#ffdcbc",
+                        "inverse-on-surface": "#f6f0ea",
+                        "secondary": "#895100",
+                        "secondary-fixed-dim": "#ffb86b",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#390b0e",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "on-secondary-container": "#663b00",
+                        "on-surface": "#1d1b18",
+                        "surface-container-high": "#ede7e1",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#a8e7c5",
+                        "tertiary-container": "#8d4d4e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "container-margin": "20px",
+                        "base": "4px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-sm": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- Mock Background Content (Visual Context) -->
+<header class="bg-surface/90 backdrop-blur-md sticky top-0 z-40 border-b border-outline-variant/30 flex justify-between items-center w-full px-container-margin py-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Picklerage</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<main class="p-container-margin space-y-lg pb-32">
+<!-- Mock Page Content -->
+<div class="bg-white rounded-lg p-md shadow-sm border border-outline-variant/20">
+<h2 class="font-headline-md text-headline-md mb-sm">Menu Categories</h2>
+<div class="flex gap-sm overflow-x-auto pb-xs">
+<span class="bg-primary text-on-primary px-md py-xs rounded-full font-label-md text-label-md">Thai Classics</span>
+<span class="bg-surface-container-low text-on-surface-variant px-md py-xs rounded-full font-label-md text-label-md border border-outline-variant/30">Curries</span>
+<span class="bg-surface-container-low text-on-surface-variant px-md py-xs rounded-full font-label-md text-label-md border border-outline-variant/30">Beverages</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Demo Buttons to trigger modals -->
+<button class="bg-primary-container text-on-primary-container p-md rounded-lg flex items-center justify-between group active:scale-95 transition-all" onclick="toggleSheet('checkout-sheet')">
+<div class="text-left">
+<p class="font-label-md text-label-md uppercase tracking-wider opacity-80">Action</p>
+<p class="font-headline-md text-headline-md">Open Checkout</p>
+</div>
+<span class="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">shopping_cart_checkout</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container p-md rounded-lg flex items-center justify-between group active:scale-95 transition-all" onclick="toggleSheet('waiter-sheet')">
+<div class="text-left">
+<p class="font-label-md text-label-md uppercase tracking-wider opacity-80">Service</p>
+<p class="font-headline-md text-headline-md">Call Waiter</p>
+</div>
+<span class="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">person_raised_hand</span>
+</button>
+<button class="bg-surface-container-highest text-on-surface p-md rounded-lg flex items-center justify-between group active:scale-95 transition-all border border-outline-variant/30" onclick="toggleSheet('history-sheet')">
+<div class="text-left">
+<p class="font-label-md text-label-md uppercase tracking-wider opacity-80">Activity</p>
+<p class="font-headline-md text-headline-md">Order History</p>
+</div>
+<span class="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">history</span>
+</button>
+<button class="bg-surface-container-highest text-on-surface p-md rounded-lg flex items-center justify-between group active:scale-95 transition-all border border-outline-variant/30" onclick="toggleSheet('category-sheet')">
+<div class="text-left">
+<p class="font-label-md text-label-md uppercase tracking-wider opacity-80">Explore</p>
+<p class="font-headline-md text-headline-md">Full Menu List</p>
+</div>
+<span class="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">menu_book</span>
+</button>
+</div>
+</main>
+<!-- Modal Overlays & Bottom Sheets -->
+<!-- 1. CHECKOUT SLIDE-UP SHEET -->
+<div class="fixed inset-0 bg-black/40 z-[60] hidden transition-opacity duration-300 backdrop-blur-sm" id="checkout-sheet-overlay" onclick="toggleSheet('checkout-sheet')"></div>
+<div class="fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-lg shadow-xl bottom-sheet-transition sheet-hidden max-h-[795px] flex flex-col" id="checkout-sheet">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto my-md flex-shrink-0"></div>
+<div class="px-container-margin pb-xl overflow-y-auto">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile">Checkout</h2>
+<p class="text-on-surface-variant font-label-md text-label-md">Review your selections</p>
+</div>
+<div class="bg-surface-container-high px-md py-1 rounded-full border border-outline-variant/30">
+<span class="font-label-md text-label-md text-primary">Dine-in, Table-1</span>
+</div>
+</div>
+<!-- Order Summary -->
+<div class="space-y-md mb-xl">
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg bg-cover bg-center flex-shrink-0" data-alt="A premium food photography shot of authentic Pad Thai noodles with shrimp, tofu, and crushed peanuts, plated beautifully on a ceramic dish. The lighting is warm and cinematic, highlighting the vibrant textures and colors against a soft, creamy bistro background with forest green accents." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDEwz8Z7mDETeZDis7X872JeLb-uPZ9UpV1gYzqwNuNvPdECWhxM3erg5ihhww3RHVXLOgEpRn16oxcylEaTyZRWHZHtS-aH99TbvG2Oyv1Rz2OMRzJbAlCxlOP3tH7DVAJRLfvO0LGWGXQ8G_-T9VTHnz1s4TtecQ04jMnOnm5x5bVlTHHfWSixA04uSmWumqgX2FqVJluEeDfpyuM27pSEvUjVQeOs-e8GFIHhCFssvbCpGBvHmyuJ3fr5t0zd03NP1cYw7w3ZrA')"></div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<span class="font-headline-md text-headline-md">Pad Thai</span>
+<span class="font-label-md text-label-md">$14.50</span>
+</div>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Quantity: 1</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg bg-cover bg-center flex-shrink-0" data-alt="A top-down view of a rich, aromatic Green Curry in a traditional bowl, garnished with fresh basil leaves and red chili. The scene is bright and airy with high-key lighting, emphasizing a clean and modern restaurant aesthetic using warm wood tones and vibrant green colors." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAB3YISW3Pjz8qu-P0RnuZN4h0VDTOCWau7rEKfH0g9trc6sGUq5b26TOySrsc4-SahkxWRgB1BbXzb0kDDu0wpG7wj3ENeInQTeqFd7xX8s4VN134-tWUdmfxlaStjqcye24Owc0Mfiv-b_j1dPNjTJGKqi8mq3wDBZ_4tyjh8usWKJK34E_II-zzWkW0NjVz3BC3iKD6pZ0z-gGZ2_SXMsIkjottOpmSvIUEhifLQomNAOXJ2ofyRGySehlgT5nQvxAU7qy5sjgQ')"></div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<span class="font-headline-md text-headline-md">Green Curry</span>
+<span class="font-label-md text-label-md">$16.00</span>
+</div>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Quantity: 1</p>
+</div>
+</div>
+</div>
+<!-- Totals -->
+<div class="border-t border-outline-variant/30 py-md space-y-sm">
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Subtotal</span>
+<span class="font-body-md text-body-md">$30.50</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Service Fee (5%)</span>
+<span class="font-body-md text-body-md">$1.52</span>
+</div>
+<div class="flex justify-between text-primary font-bold">
+<span class="font-headline-md text-headline-md">Total</span>
+<span class="font-headline-md text-headline-md">$32.02</span>
+</div>
+</div>
+<!-- Form Fields -->
+<div class="space-y-md mt-md">
+<div>
+<label class="block font-label-md text-label-md mb-xs text-on-surface-variant">Full Name</label>
+<input class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg p-md focus:ring-primary focus:border-primary" placeholder="Enter your name" type="text">
+</div>
+<div>
+<label class="block font-label-md text-label-md mb-xs text-on-surface-variant">Mobile Number</label>
+<input class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg p-md focus:ring-primary focus:border-primary" placeholder="+1 (555) 000-0000" type="tel">
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-lg rounded-full font-headline-md text-headline-md mt-xl shadow-lg active:scale-[0.98] transition-transform">
+                Confirm Order
+            </button>
+</div>
+</div>
+<!-- 2. WAITER MODAL -->
+<div class="fixed inset-0 bg-black/40 z-[60] hidden transition-opacity duration-300 backdrop-blur-sm" id="waiter-sheet-overlay" onclick="toggleSheet('waiter-sheet')"></div>
+<div class="fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-lg shadow-xl bottom-sheet-transition sheet-hidden" id="waiter-sheet">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto my-md"></div>
+<div class="px-container-margin pb-xl">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-md text-center">How can we help?</h2>
+<div class="grid grid-cols-1 gap-md">
+<div class="bg-surface-container-low p-md rounded-lg flex items-center justify-between border border-outline-variant/20 hover:border-primary/40 transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary text-2xl">water_drop</span>
+<span class="font-headline-md text-headline-md">Water please</span>
+</div>
+<button class="bg-primary-container text-on-primary-container px-lg py-xs rounded-full font-label-md text-label-md">Select</button>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg flex items-center justify-between border border-outline-variant/20 hover:border-primary/40 transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary text-2xl">add_shopping_cart</span>
+<span class="font-headline-md text-headline-md">New order</span>
+</div>
+<button class="bg-primary-container text-on-primary-container px-lg py-xs rounded-full font-label-md text-label-md">Select</button>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg flex items-center justify-between border border-outline-variant/20 hover:border-primary/40 transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+<span class="font-headline-md text-headline-md">Bill Please</span>
+</div>
+<button class="bg-primary-container text-on-primary-container px-lg py-xs rounded-full font-label-md text-label-md">Select</button>
+</div>
+</div>
+<button class="w-full mt-xl text-on-surface-variant font-label-md text-label-md uppercase tracking-widest" onclick="toggleSheet('waiter-sheet')">Dismiss</button>
+</div>
+</div>
+<!-- 3. ORDER HISTORY MODAL -->
+<div class="fixed inset-0 bg-black/40 z-[60] hidden transition-opacity duration-300 backdrop-blur-sm" id="history-sheet-overlay" onclick="toggleSheet('history-sheet')"></div>
+<div class="fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-lg shadow-xl bottom-sheet-transition sheet-hidden max-h-[751px] flex flex-col" id="history-sheet">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto my-md flex-shrink-0"></div>
+<div class="px-container-margin pb-xl overflow-y-auto">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-lg">Your History</h2>
+<div class="space-y-lg">
+<!-- Order Item 1 -->
+<div class="bg-white p-md rounded-lg border border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-start mb-md">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ORDER #8821</p>
+<h3 class="font-headline-md text-headline-md">Tom Yum Goong</h3>
+</div>
+<div class="flex items-center gap-xs text-secondary font-bold bg-secondary-container/20 px-sm py-1 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">skillet</span>
+<span class="text-label-sm font-label-sm">Sent to kitchen</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-label-sm font-label-sm">
+<span>Today, 12:45 PM</span>
+<span class="text-on-surface font-bold">$18.00</span>
+</div>
+</div>
+<!-- Order Item 2 -->
+<div class="bg-white p-md rounded-lg border border-outline-variant/30 shadow-sm opacity-80">
+<div class="flex justify-between items-start mb-md">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ORDER #8815</p>
+<h3 class="font-headline-md text-headline-md">Thai Iced Tea</h3>
+</div>
+<div class="flex items-center gap-xs text-primary font-bold bg-primary-container/20 px-sm py-1 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-label-sm font-label-sm">Served</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-label-sm font-label-sm">
+<span>Today, 12:30 PM</span>
+<span class="text-on-surface font-bold">$4.50</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. CATEGORY MODAL -->
+<div class="fixed inset-0 bg-black/40 z-[60] hidden transition-opacity duration-300 backdrop-blur-sm" id="category-sheet-overlay" onclick="toggleSheet('category-sheet')"></div>
+<div class="fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-lg shadow-xl bottom-sheet-transition sheet-hidden max-h-[751px] flex flex-col" id="category-sheet">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto my-md flex-shrink-0"></div>
+<div class="px-container-margin pb-xl overflow-y-auto">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile">Menu Categories</h2>
+<button class="p-sm rounded-full bg-surface-container-high" onclick="toggleSheet('category-sheet')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<nav class="space-y-sm">
+<a class="flex items-center justify-between p-md rounded-lg bg-primary-container text-on-primary-container font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">star</span>
+<span>Chef's Specials</span>
+</div>
+<span class="bg-on-primary-container/20 px-sm rounded-full text-label-sm">8</span>
+</a>
+<a class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-high transition-colors font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">local_fire_department</span>
+<span>Spicy Favorites</span>
+</div>
+<span class="bg-surface-container-highest px-sm rounded-full text-label-sm">12</span>
+</a>
+<a class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-high transition-colors font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">ramen_dining</span>
+<span>Noodles &amp; Rice</span>
+</div>
+<span class="bg-surface-container-highest px-sm rounded-full text-label-sm">15</span>
+</a>
+<a class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-high transition-colors font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">soup_kitchen</span>
+<span>Soups</span>
+</div>
+<span class="bg-surface-container-highest px-sm rounded-full text-label-sm">6</span>
+</a>
+<a class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-high transition-colors font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">local_bar</span>
+<span>Drinks</span>
+</div>
+<span class="bg-surface-container-highest px-sm rounded-full text-label-sm">22</span>
+</a>
+<a class="flex items-center justify-between p-md rounded-lg hover:bg-surface-container-high transition-colors font-headline-md" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">icecream</span>
+<span>Desserts</span>
+</div>
+<span class="bg-surface-container-highest px-sm rounded-full text-label-sm">5</span>
+</a>
+</nav>
+</div>
+</div>
+<!-- Standard Navigation (Shared Components Mapping) -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-md flex justify-around items-center px-lg pb-safe pt-sm border-t border-outline-variant/30 shadow-[0_-4px_12px_rgba(0,0,0,0.04)] z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-sm text-label-sm">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" onclick="toggleSheet('waiter-sheet')">
+<span class="material-symbols-outlined" data-icon="person_raised_hand">person_raised_hand</span>
+<span class="font-label-sm text-label-sm">Call Waiter</span>
+</button>
+</nav>
+<script>
+        function toggleSheet(id) {
+            const sheet = document.getElementById(id);
+            const overlay = document.getElementById(id + '-overlay');
+            
+            if (sheet.classList.contains('sheet-hidden')) {
+                // Show
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.add('opacity-100');
+                    sheet.classList.remove('sheet-hidden');
+                    sheet.classList.add('sheet-visible');
+                }, 10);
+            } else {
+                // Hide
+                sheet.classList.remove('sheet-visible');
+                sheet.classList.add('sheet-hidden');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Logic to determine active nav button - default to none for this multi-modal demo
+        // except the "Call Waiter" which is highlighted as primary in the JSON for this context
+    </script>
+</body></html>

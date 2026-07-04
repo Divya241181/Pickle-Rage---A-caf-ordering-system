@@ -1,0 +1,294 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Picklerage - Order Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        .stepper-line {
+            height: 2px;
+            flex-grow: 1;
+            background-color: #bfc9c1;
+            margin: 0 4px;
+        }
+        .stepper-line.completed {
+            background-color: #0f5238;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#683d00",
+                    "surface-tint": "#2c694e",
+                    "tertiary": "#713638",
+                    "on-tertiary-fixed-variant": "#6f3537",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1d1b18",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#bfc9c1",
+                    "background": "#fff8f2",
+                    "primary": "#0f5238",
+                    "surface-container-highest": "#e8e1db",
+                    "tertiary-fixed": "#ffdad9",
+                    "on-secondary-fixed": "#2c1700",
+                    "primary-container": "#2d6a4f",
+                    "surface-variant": "#e8e1db",
+                    "on-primary-fixed": "#002114",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#95d4b3",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "surface-container": "#f3ede7",
+                    "on-surface-variant": "#404943",
+                    "surface-bright": "#fff8f2",
+                    "primary-fixed-dim": "#95d4b3",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f9f2ec",
+                    "outline": "#707973",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#ffcfce",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#dfd9d3",
+                    "secondary-container": "#fd9d1a",
+                    "surface": "#fff8f2",
+                    "inverse-surface": "#33302c",
+                    "primary-fixed": "#b1f0ce",
+                    "secondary-fixed": "#ffdcbc",
+                    "inverse-on-surface": "#f6f0ea",
+                    "secondary": "#895100",
+                    "secondary-fixed-dim": "#ffb86b",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#390b0e",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "on-secondary-container": "#663b00",
+                    "on-surface": "#1d1b18",
+                    "surface-container-high": "#ede7e1",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#a8e7c5",
+                    "tertiary-container": "#8d4d4e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "20px",
+                    "base": "4px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "gutter": "12px"
+            },
+            "fontFamily": {
+                    "body-md": ["Be Vietnam Pro"],
+                    "label-md": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md flex flex-col">
+<!-- Header / TopAppBar Component -->
+<header class="bg-surface/90 backdrop-blur-md sticky top-0 z-50 border-b border-outline-variant/30 shadow-sm flex justify-between items-center w-full px-container-margin py-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Picklerage</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-start w-full max-w-md mx-auto px-container-margin py-xl space-y-xl">
+<!-- Confirmation Hero Section -->
+<section class="text-center w-full space-y-md animate-fade-in">
+<div class="inline-flex items-center justify-center w-20 h-20 bg-primary-container/20 rounded-full mb-md">
+<div class="w-14 h-14 bg-primary-container rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-primary-container text-[40px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Order confirmed</h2>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mt-xs">Order #PR-1042</p>
+</div>
+</section>
+<!-- Live Status Stepper -->
+<section class="w-full bg-surface-container-low rounded-lg p-lg shadow-sm border border-outline-variant/20">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface">Live Status</h3>
+<span class="px-3 py-1 bg-primary text-on-primary text-label-sm font-label-sm rounded-full step-pulse">
+                    Preparing
+                </span>
+</div>
+<!-- Stepper Component -->
+<div class="relative flex flex-col space-y-lg">
+<!-- Row 1: Icons & Connecting Lines -->
+<div class="flex items-center justify-between w-full relative px-2">
+<!-- Step 1: Placed -->
+<div class="flex flex-col items-center z-10">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+</div>
+</div>
+<div class="stepper-line completed"></div>
+<!-- Step 2: Accepted -->
+<div class="flex flex-col items-center z-10">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+</div>
+</div>
+<div class="stepper-line completed"></div>
+<!-- Step 3: Preparing (Active) -->
+<div class="flex flex-col items-center z-10">
+<div class="w-10 h-10 rounded-full bg-primary-container border-4 border-primary/20 flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="cooking">cooking</span>
+</div>
+</div>
+<div class="stepper-line"></div>
+<!-- Step 4: Ready -->
+<div class="flex flex-col items-center z-10">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="restaurant_menu">restaurant_menu</span>
+</div>
+</div>
+<div class="stepper-line"></div>
+<!-- Step 5: Served -->
+<div class="flex flex-col items-center z-10">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="done_all">done_all</span>
+</div>
+</div>
+</div>
+<!-- Row 2: Labels -->
+<div class="flex justify-between w-full text-center px-0">
+<span class="w-12 font-label-sm text-label-sm text-primary">Placed</span>
+<span class="w-12 font-label-sm text-label-sm text-primary">Accepted</span>
+<span class="w-12 font-label-sm text-label-sm text-primary font-bold">Preparing</span>
+<span class="w-12 font-label-sm text-label-sm text-on-surface-variant">Ready</span>
+<span class="w-12 font-label-sm text-label-sm text-on-surface-variant">Served</span>
+</div>
+</div>
+</section>
+<!-- Order Summary Card -->
+<section class="w-full space-y-md">
+<h3 class="font-headline-md text-headline-md text-on-surface px-sm">Order Summary</h3>
+<div class="bg-white rounded-lg p-md shadow-sm border border-outline-variant/10 space-y-md">
+<!-- Item 1 -->
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A high-end restaurant photography of a signature spicy artisan burger with melting aged cheddar and caramelized onions, shot with warm natural lighting on a textured wooden table. The burger looks fresh, appetizing, and gourmet, fitting a warm modern bistro aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaLcLS6hbQYsjmLTpE-cXB04pK3g8vyKhezdCbgD4pqSgHTkje59QfWCN_3AhhauHyZEAQuxh52nCoY7jPWo6_PrEAmd0yelDO7ZTibQWbpgtT-yTSIxrxsE556OwmONOUX_x3nclGsGq-gIXUM1ufD-HkC3ZrkI5KTj-8zpZ2Hg3EfYfSzVCEXsnt4qikpcdP_F2IHWKHqH83YJVkdv-qlMfvrWvSJQbU_Uu2eKdi6C7VhSCMaPUhrOokPA1leQaluTjT6b9uAKM">
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-label-md text-on-surface">Spicy Artisan Burger</h4>
+<span class="font-label-md text-primary">$18.50</span>
+</div>
+<p class="text-label-sm text-on-surface-variant">x1 • Medium Rare, No Onions</p>
+</div>
+</div>
+<div class="h-[1px] bg-outline-variant/20 w-full"></div>
+<!-- Item 2 -->
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up commercial food photography of golden crispy hand-cut truffle fries served in a minimalist ceramic bowl. Garnished with fresh herbs and a side of creamy aioli. Bright, soft light-mode bistro atmosphere with a clean beige background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqgp9DqbaDYZF1xioInluzW3QZ4HESt3yyuGi2hnMFLhHsJOJLxN1iQiDd9_sXAu6zeKZK5ZqnEgMPiqzg2kGJJgedYuVp52qpMBP3y-kA3B6RjSi6fD9FJcxK6t083U7Z5pdgHPHOSPhViTJ9j9-ssxGwtcqeQ0p5xy8DioiEhWT-U9utukA_69Jg4kkyOqyvRZbuARsng94HHyFZjCuKSQA-jyiBXlKuhthWJfOfcsBmwzZ5S4gvFIzC8kxK-4wKVrXO7l8J3Cc">
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-label-md text-on-surface">Hand-Cut Truffle Fries</h4>
+<span class="font-label-md text-primary">$8.00</span>
+</div>
+<p class="text-label-sm text-on-surface-variant">x1 • Extra Dip</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="w-full pt-md flex flex-col items-center">
+<button class="w-full max-w-xs bg-primary text-on-primary font-label-md py-4 rounded-full shadow-lg active:scale-95 transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Add more items
+            </button>
+<button class="mt-md text-primary font-label-md hover:underline active:scale-95 transition-transform flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+                View digital receipt
+            </button>
+</section>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-lg pb-safe pt-sm bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 shadow-[0_-4px_12px_rgba(0,0,0,0.04)] z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-sm text-label-sm mt-xs">Menu</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-sm text-label-sm mt-xs">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-sm text-label-sm mt-xs">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person_raised_hand">person_raised_hand</span>
+<span class="font-label-sm text-label-sm mt-xs">Call Waiter</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for the "Add more items" button
+        document.querySelector('button').addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.96)';
+        });
+        document.querySelector('button').addEventListener('mouseup', function() {
+            this.style.transform = 'scale(1)';
+        });
+
+        // Simulating a live progression for the "Preparing" status
+        let dots = 0;
+        const statusBadge = document.querySelector('.step-pulse');
+        setInterval(() => {
+            dots = (dots + 1) % 4;
+            statusBadge.innerText = 'Preparing' + '.'.repeat(dots);
+        }, 1000);
+    </script>
+</body></html>

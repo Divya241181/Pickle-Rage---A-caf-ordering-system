@@ -1,0 +1,1 @@
+from pydantic import BaseModel\n\n# Placeholder schema\n
