@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
 import { useOrdersRealtime } from "../hooks/useRealtime";
 
+const formatTime = (mins) => {
+  const d = Math.floor(mins / 1440).toString().padStart(2, '0');
+  const h = Math.floor((mins % 1440) / 60).toString().padStart(2, '0');
+  const m = (mins % 60).toString().padStart(2, '0');
+  return `${d}:${h}:${m}`;
+};
 export default function BillingDashboard() {
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState({
@@ -22,12 +28,36 @@ export default function BillingDashboard() {
         api.getBillingOrders(),
         api.getBillingStats()
       ]);
-      setOrders(ordersRes.data);
+      const rawOrders = ordersRes.data;
+      const groupedOrders = [];
+      const sessionMap = new Map();
+
+      rawOrders.forEach(order => {
+        const itemsWithStatus = order.items.map(item => ({ ...item, status: order.status }));
+        if (order.order_type === 'dine_in' && order.session_id) {
+          if (sessionMap.has(order.session_id)) {
+            const existing = sessionMap.get(order.session_id);
+            // Append items and sum the total
+            existing.items.push(...itemsWithStatus);
+            existing.total += order.total;
+            existing.original_orders.push(order);
+          } else {
+            const newGroup = { ...order, items: itemsWithStatus, original_orders: [order] };
+            sessionMap.set(order.session_id, newGroup);
+            groupedOrders.push(newGroup);
+          }
+        } else {
+          const newGroup = { ...order, items: itemsWithStatus, original_orders: [order] };
+          groupedOrders.push(newGroup);
+        }
+      });
+
+      setOrders(groupedOrders);
       setStats(statsRes.data);
       
       // Update selected order if it still exists
       if (selectedOrder) {
-        const updated = ordersRes.data.find(o => o.id === selectedOrder.id);
+        const updated = groupedOrders.find(o => o.id === selectedOrder.id);
         if (updated) setSelectedOrder(updated);
       }
     } catch (e) {
@@ -46,10 +76,16 @@ export default function BillingDashboard() {
   const handlePayment = async () => {
     if (!selectedOrder) return;
     try {
-      await api.confirmPayment(selectedOrder.id, { method: paymentMethod, amount: selectedOrder.total });
+      // Process payments for all original orders that make up this entry sequentially to prevent race conditions on session closing
+      for (const origOrder of selectedOrder.original_orders) {
+        if (origOrder.status !== 'completed' && !origOrder.payment) {
+          await api.confirmPayment(origOrder.id, { method: paymentMethod, amount: origOrder.total });
+        }
+      }
       setSelectedOrder(null);
       fetchData();
     } catch (e) {
+      console.error(e);
       alert("Payment failed");
     }
   };
@@ -137,33 +173,35 @@ export default function BillingDashboard() {
               <div 
                 key={order.id} 
                 onClick={() => setSelectedOrder(order)}
-                className={`relative bg-surface-container-lowest rounded-xl border soft-shadow p-md cursor-pointer transition-transform hover:-translate-y-1 overflow-hidden ${isSelected ? 'ring-1 ring-primary/20 bg-surface-container-low' : 'border-outline-variant'}`}
+                className={`relative bg-surface-container-lowest rounded-xl border soft-shadow p-md cursor-pointer transition-transform hover:-translate-y-1 overflow-hidden ${isSelected ? 'ring-1 ring-primary/20 bg-surface-container-low' : 'border-outline-variant'} ${order.status === 'ready' ? 'border-l-4 border-l-emerald-400 bg-emerald-50/30' : ''}`}
               >
-                <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${getBorderColor(order.status, mins)}`}></div>
+                <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${getBorderColor(order.status, mins)} ${order.status === 'ready' ? 'hidden' : ''}`}></div>
                 <div className="flex justify-between items-start ml-sm">
                   <div className="flex items-center gap-md">
-                    <span className="font-headline-md text-primary font-bold">#{order.id.slice(0, 5)}</span>
+                    <span className="font-headline-md text-primary font-bold">
+                      {order.order_type === 'dine_in' ? `Table ${order.table_number}` : `Takeout - ${order.customer_name}`}
+                    </span>
                     <span className="px-2 py-0.5 bg-surface-container-high rounded text-xs font-label-sm flex items-center gap-1">
                       <span className="material-symbols-outlined text-[14px]">{order.order_type === 'dine_in' ? 'restaurant' : 'takeout_dining'}</span> 
                       {order.order_type === 'dine_in' ? 'Dine-in' : 'Takeout'}
                     </span>
-                    {order.table_number && <span className="font-label-md text-on-surface-variant border border-outline-variant rounded px-2">T-{order.table_number}</span>}
                   </div>
                   <span className="font-headline-md text-on-surface">₹{order.total}</span>
                 </div>
                 <div className="mt-md flex justify-between items-end ml-sm">
                   <div>
                     <p className="font-body-md text-on-surface font-medium">{order.customer_name}</p>
-                    <p className="text-sm text-on-surface-variant mt-xs">{order.items.length} Items • {mins}m ago</p>
+                    <p className="text-sm text-on-surface-variant mt-xs">{order.items.length} Items • {formatTime(mins)} ago</p>
                   </div>
                   <div className="flex gap-sm">
                     <span className="px-3 py-1 bg-primary-fixed rounded-full text-on-primary-fixed text-xs font-bold flex items-center gap-1 uppercase">
+                      {order.status === 'ready' && <span className="material-symbols-outlined text-[14px]">notifications_active</span>}
                       {order.status}
                     </span>
                     {order.payment ? (
                       <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">PAID</span>
                     ) : (
-                      <span className="px-3 py-1 bg-secondary-fixed rounded-full text-on-secondary-fixed text-xs font-bold">PENDING</span>
+                      <span className="px-3 py-1 bg-secondary-fixed rounded-full text-on-secondary-fixed text-xs font-bold">UNPAID</span>
                     )}
                   </div>
                 </div>
@@ -182,7 +220,9 @@ export default function BillingDashboard() {
             </button>
             <div className="flex justify-between items-start mt-4 md:mt-0">
               <div>
-                <h3 className="font-headline-md text-primary font-bold">Order #{selectedOrder.id.slice(0, 5)}</h3>
+                <h3 className="font-headline-md text-primary font-bold">
+                  {selectedOrder.order_type === 'dine_in' ? `Table ${selectedOrder.table_number}` : `Takeout - ${selectedOrder.customer_name}`}
+                </h3>
                 <p className="font-body-md text-on-surface-variant mt-1">{selectedOrder.customer_name}</p>
               </div>
               <div className="text-right">
@@ -219,27 +259,55 @@ export default function BillingDashboard() {
               </div>
             </div>
           </div>
-          
-          {!selectedOrder.payment && selectedOrder.status !== 'cancelled' && (
-            <div className="p-lg bg-surface-container-low border-t border-outline-variant">
-              <h4 className="font-label-md text-on-surface mb-sm">Payment Method</h4>
-              <div className="grid grid-cols-2 gap-2 mb-md">
-                {['UPI', 'Cash', 'Card', 'Other'].map(method => (
-                  <button 
-                    key={method}
-                    onClick={() => setPaymentMethod(method)}
-                    className={`py-2 px-2 border rounded-lg font-label-md flex items-center justify-center gap-1 transition-colors ${paymentMethod === method ? 'border-primary bg-primary-fixed-dim/20 text-primary' : 'border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-variant'}`}
-                  >
-                    {method}
-                  </button>
-                ))}
+          {/* Conditional Action Section */}
+          <div className="p-lg bg-surface-container-low border-t border-outline-variant">
+            {selectedOrder.status === 'completed' || selectedOrder.status === 'cancelled' ? null : 
+             ['pending', 'accepted', 'preparing'].includes(selectedOrder.status) ? (
+              <div className="text-center text-on-surface-variant font-label-md py-4">
+                Waiting for kitchen...
               </div>
-              <button onClick={handlePayment} className="w-full py-3 bg-primary text-on-primary rounded-full font-label-md font-bold shadow-sm hover:scale-98 transition-transform flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[20px]">check_circle</span>
-                Confirm Payment
+            ) : selectedOrder.status === 'ready' ? (
+              <button 
+                onClick={async () => {
+                  try {
+                    for (const origOrder of selectedOrder.original_orders) {
+                      if (origOrder.status === 'ready') {
+                        await api.updateBillingStatus(origOrder.id, 'served');
+                      }
+                    }
+                    setSelectedOrder(null);
+                    fetchData();
+                  } catch (e) {
+                    console.error(e);
+                    alert("Failed to mark as served");
+                  }
+                }}
+                className="w-full py-3 bg-emerald-600 text-white rounded-full font-label-md font-bold shadow-sm hover:scale-98 transition-transform flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined text-[20px]">room_service</span>
+                Mark Served
               </button>
-            </div>
-          )}
+            ) : selectedOrder.status === 'served' && !selectedOrder.payment ? (
+              <>
+                <h4 className="font-label-md text-on-surface mb-sm">Payment Method</h4>
+                <div className="grid grid-cols-2 gap-2 mb-md">
+                  {['UPI', 'Cash', 'Card', 'Other'].map(method => (
+                    <button 
+                      key={method}
+                      onClick={() => setPaymentMethod(method)}
+                      className={`py-2 px-2 border rounded-lg font-label-md flex items-center justify-center gap-1 transition-colors ${paymentMethod === method ? 'border-primary bg-primary-fixed-dim/20 text-primary' : 'border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-variant'}`}
+                    >
+                      {method}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={handlePayment} className="w-full py-3 bg-primary text-on-primary rounded-full font-label-md font-bold shadow-sm hover:scale-98 transition-transform flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                  Confirm Payment
+                </button>
+              </>
+            ) : null}
+          </div>
         </aside>
       )}
     </div>

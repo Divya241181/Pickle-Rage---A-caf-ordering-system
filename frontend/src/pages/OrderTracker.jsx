@@ -162,8 +162,8 @@ export default function OrderTracker() {
           <span className="font-label-sm text-label-sm mt-xs">Menu</span>
         </a>
         <a className="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-95 transition-transform duration-150">
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>history</span>
-          <span className="font-label-sm text-label-sm mt-xs">History</span>
+          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
+          <span className="font-label-sm text-label-sm mt-xs">My Order</span>
         </a>
       </nav>
     </>

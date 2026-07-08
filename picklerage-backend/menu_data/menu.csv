@@ -1,0 +1,21 @@
+category,sort_order,name,description,price,food_type,is_popular,is_available
+Thai Street Flavor,1,Classic Pad Thai,"Rice noodles stir-fried with tofu, bean sprouts, peanuts, and tamarind sauce",245,veg,true,true
+Thai Street Flavor,1,Veg Tom Yum Soup,"Lemongrass, kaffir lime, mushrooms, Thai herbs, chili paste",110,veg,false,true
+Thai Street Flavor,1,Thai Coconut Soup,"Coconut milk, lemongrass, mushrooms, Thai spices",130,veg,false,true
+Thai Street Flavor,1,Thai Basil Veg Noodles,"Rice noodles, Thai basil, vegetables, soy sauce",170,veg,false,true
+Korean Street Kitchen,2,Veg Bibimbap,"Rice bowl with mixed vegetables, gochujang sauce, sesame oil",180,veg,true,true
+Korean Street Kitchen,2,Japchae Noodles,"Glass noodles stir-fried with vegetables and sesame",160,veg,false,true
+Chinese Favorites,3,Schezwan Fried Rice,"Spicy schezwan sauce, vegetables, scrambled egg",130,veg,true,true
+Chinese Favorites,3,Veg Manchurian,"Crispy vegetable balls in a spicy manchurian sauce",140,veg,false,true
+Chinese Favorites,3,Spring Rolls,"Crispy rolls stuffed with cabbage, carrots and noodles",120,veg,false,true
+Italian Kitchen,4,Farm House Pizza,"Capsicum, onion, tomato, mushroom, corn on a tomato base",280,veg,true,true
+Italian Kitchen,4,Pasta Arrabbiata,"Penne pasta in a spicy tomato and garlic sauce",220,veg,false,true
+Italian Kitchen,4,Garlic Bread,"Toasted bread with garlic butter and herbs",80,veg,false,true
+American Street Bites,7,Classic Veg Burger,"Crispy veg patty, lettuce, tomato, cheese, special sauce",150,veg,true,true
+American Street Bites,7,Masala Fries,"Crispy fries tossed in our special masala blend",100,veg,false,true
+American Street Bites,7,Loaded Nachos,"Tortilla chips with salsa, sour cream, jalapenos and cheese",180,veg,false,true
+Desserts,8,Chocolate Lava Cake,"Warm chocolate cake with a molten center, served with vanilla ice cream",160,veg,true,true
+Desserts,8,Mango Kulfi,"Traditional Indian ice cream with mango flavor",90,veg,false,true
+Mexican Station,6,Veggie Tacos,"Soft shell tacos with beans, salsa, and cheese",150,veg,true,true
+Mexican Station,6,Cheese Quesadilla,"Grilled tortilla stuffed with cheese and jalapeños",140,veg,false,true
+Mongolian Box Selection,5,Spicy Tofu Box,"Stir-fried tofu with mixed greens in spicy sauce",180,veg,true,true

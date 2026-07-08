@@ -59,3 +59,25 @@ def get_order_status(order_id: str):
     data = order.data[0]
     data["items"] = items.data
     return data
+
+@router.get("/session/{session_id}")
+def get_session_orders(session_id: str):
+    orders = supabase.table("orders").select("*").eq("session_id", session_id).order("created_at", desc=False).execute()
+    if not orders.data:
+        return []
+        
+    order_ids = [o["id"] for o in orders.data]
+    items = supabase.table("order_items").select("*, menu_items(name, price)").in_("order_id", order_ids).execute()
+    
+    items_by_order = {}
+    for item in items.data:
+        if item["order_id"] not in items_by_order:
+            items_by_order[item["order_id"]] = []
+        items_by_order[item["order_id"]].append(item)
+        
+    result = []
+    for o in orders.data:
+        o["items"] = items_by_order.get(o["id"], [])
+        result.append(o)
+        
+    return result

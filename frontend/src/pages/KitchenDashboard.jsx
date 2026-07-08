@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
 import { useOrdersRealtime } from "../hooks/useRealtime";
 
+const formatTime = (mins) => {
+  const d = Math.floor(mins / 1440).toString().padStart(2, '0');
+  const h = Math.floor((mins % 1440) / 60).toString().padStart(2, '0');
+  const m = (mins % 60).toString().padStart(2, '0');
+  return `${d}:${h}:${m}`;
+};
 const OrderCard = ({ order, onAction, actionLabel, actionColor }) => {
   const mins = Math.floor(order.elapsed_seconds / 60);
   
@@ -21,9 +27,18 @@ const OrderCard = ({ order, onAction, actionLabel, actionColor }) => {
       <div className="p-md">
         <div className="flex justify-between items-start mb-sm">
           <div>
-            <span className="font-mono text-headline-md text-on-surface">#{order.id.slice(0, 5)}</span>
-            <p className="text-on-surface-variant font-label-md">
-              {order.table_number ? `Table ${order.table_number}` : 'Takeout'} • {order.customer_name}
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-headline-md text-on-surface font-bold tracking-tight">
+                {order.order_type === 'takeout' ? 'Takeaway' : `Table ${order.table_number}`}
+              </span>
+              {order.order_type === 'dine_in' && order.round_number && (
+                <span className="font-label-md text-primary bg-primary-fixed-dim/20 px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                  Round {order.round_number}
+                </span>
+              )}
+            </div>
+            <p className="text-on-surface-variant font-label-md mt-1">
+              {order.customer_name} <span className="text-outline/50 text-[10px] ml-1">#{order.id.slice(0, 4)}</span>
             </p>
           </div>
           <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${order.order_type === 'takeout' ? 'bg-orange-500/10 text-orange-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
@@ -43,7 +58,7 @@ const OrderCard = ({ order, onAction, actionLabel, actionColor }) => {
         <div className="flex items-center justify-between mt-md">
           <span className={`${timeColor} text-sm flex items-center gap-1`}>
             <span className="material-symbols-outlined text-[18px]">schedule</span>
-            {mins} min ago
+            {formatTime(mins)} ago
           </span>
           {onAction ? (
             <button onClick={() => onAction(order)} className={`h-12 text-white font-bold px-lg rounded-full transition-all active:scale-95 ${actionColor}`}>

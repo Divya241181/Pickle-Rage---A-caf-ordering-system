@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from database import supabase
 from schemas.payment import PaymentCreate, PaymentResponse
+from pydantic import BaseModel
 from datetime import datetime, timezone, timedelta
+
+class OrderStatusUpdate(BaseModel):
+    status: str
 
 router = APIRouter()
 
@@ -57,6 +61,7 @@ def get_billing_orders():
             
         formatted_orders.append({
             "id": order["id"],
+            "session_id": order.get("session_id"),
             "order_type": order["order_type"],
             "table_number": table_number,
             "customer_name": order["customer_name"],
@@ -90,6 +95,27 @@ def record_payment(order_id: str, payment: PaymentCreate):
 def complete_order(order_id: str):
     order = process_order_completion(order_id)
     return {"message": "Order marked as completed", "order": order}
+
+@router.patch("/orders/{order_id}/status")
+def update_billing_status(order_id: str, payload: OrderStatusUpdate):
+    # Fetch current order to check status
+    order_res = supabase.table("orders").select("status").eq("id", order_id).execute()
+    if not order_res.data:
+        raise HTTPException(status_code=404, detail="Order not found")
+        
+    current_status = order_res.data[0]["status"]
+    new_status = payload.status
+    
+    # Enforce valid transitions
+    if (current_status == "ready" and new_status == "served") or \
+       (current_status == "served" and new_status == "completed"):
+        if new_status == "completed":
+            return complete_order(order_id)
+        else:
+            updated = supabase.table("orders").update({"status": new_status}).eq("id", order_id).execute()
+            return updated.data[0]
+            
+    raise HTTPException(status_code=400, detail="Invalid status transition")
 
 @router.get("/stats")
 def get_billing_stats():
