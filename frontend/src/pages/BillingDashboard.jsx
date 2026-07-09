@@ -98,7 +98,7 @@ export default function BillingDashboard() {
   useWaiterCallsRealtime((payload) => {
     if (payload.eventType === 'INSERT') {
       playNotificationSound();
-      setWaiterCalls(prev => [payload.new, ...prev]);
+      api.getWaiterCalls().then(res => setWaiterCalls(res.data.filter(c => c.status === 'pending')));
     } else if (payload.eventType === 'UPDATE') {
       if (payload.new.status !== 'pending') {
         setWaiterCalls(prev => prev.filter(c => c.id !== payload.new.id));
@@ -178,17 +178,23 @@ export default function BillingDashboard() {
             </div>
             <div className="space-y-sm mb-lg">
               {waiterCalls.map(call => {
-                const isBill = call.reason?.toLowerCase().includes('bill');
-                const isWater = call.reason?.toLowerCase().includes('water');
+                const type = call.call_type;
+                const isBill = type === 'bill';
+                const isWater = type === 'water';
                 const bgClass = isBill ? 'bg-error-container text-on-error-container' : isWater ? 'bg-primary-container text-on-primary-container' : 'bg-orange-100 text-orange-900';
                 
+                // If it's from a realtime insert, table_sessions might not be joined. 
+                // We will handle it by re-fetching all calls on insert anyway, so table_number will be present.
+                const tableName = call.table_sessions?.tables?.table_number || '?';
+                const displayReason = isBill ? 'Bill Please' : isWater ? 'Water Please' : 'New Order';
+
                 return (
                   <div key={call.id} className={`p-sm rounded-lg ${bgClass}`}>
                     <div className="flex justify-between items-start mb-xs">
-                      <span className="font-bold text-xs tracking-tight">Table {call.table_number}</span>
+                      <span className="font-bold text-xs tracking-tight">Table {tableName}</span>
                       <span className="text-[10px] opacity-80">{formatElapsed(call.created_at)}</span>
                     </div>
-                    <p className="text-xs mb-sm font-medium">{call.reason}</p>
+                    <p className="text-xs mb-sm font-medium">{displayReason}</p>
                     <button 
                       onClick={async () => {
                         try {

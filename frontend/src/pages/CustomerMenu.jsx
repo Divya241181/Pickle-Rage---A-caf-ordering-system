@@ -73,12 +73,13 @@ export default function CustomerMenu({ tableInfo, session }) {
     }, 3000);
   };
 
-  const handleWaiter = async (reason) => {
-    if (!tableInfo.table_id) return alert("Not seated at a table.");
+  const handleWaiter = async (callType) => {
+    if (!session?.id) return alert("No active session.");
     try {
-      await api.callWaiter({ table_id: tableInfo.table_id, reason });
+      await api.callWaiter({ session_id: session.id, call_type: callType });
       setWaiterModalOpen(false);
-      showToast(`Waiter called for: ${reason}`);
+      const displayMap = { water: "Water please", new_order: "New order", bill: "Bill Please" };
+      showToast(`Waiter called for: ${displayMap[callType]}`);
     } catch (e) {
       alert("Failed to call waiter");
     }
@@ -218,7 +219,7 @@ export default function CustomerMenu({ tableInfo, session }) {
             
             <div className="p-xl space-y-md overflow-y-auto">
               
-              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("Water please")}>
+              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("water")}>
                 <div className="flex items-center gap-md">
                   <div className="h-12 w-12 rounded-full border border-outline-variant/30 flex items-center justify-center bg-surface-container-low text-blue-500 text-xl shadow-sm">
                     <span className="material-symbols-outlined">water_drop</span>
@@ -231,7 +232,7 @@ export default function CustomerMenu({ tableInfo, session }) {
                 <span className="font-label-md text-primary font-bold">Select</span>
               </div>
               
-              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("New order")}>
+              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("new_order")}>
                 <div className="flex items-center gap-md">
                   <div className="h-12 w-12 rounded-full border border-outline-variant/30 flex items-center justify-center bg-surface-container-low text-purple-500 text-xl shadow-sm">
                     <span className="material-symbols-outlined">restaurant</span>
@@ -244,7 +245,7 @@ export default function CustomerMenu({ tableInfo, session }) {
                 <span className="font-label-md text-primary font-bold">Select</span>
               </div>
               
-              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("Bill Please")}>
+              <div className="flex items-center justify-between p-lg border border-outline-variant/30 rounded-2xl hover:border-primary/50 transition-colors cursor-pointer" onClick={() => handleWaiter("bill")}>
                 <div className="flex items-center gap-md">
                   <div className="h-12 w-12 rounded-full border border-outline-variant/30 flex items-center justify-center bg-surface-container-low text-gray-500 text-xl shadow-sm">
                     <span className="material-symbols-outlined">receipt_long</span>
