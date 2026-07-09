@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
 import { useOrdersRealtime } from "../hooks/useRealtime";
+import { formatElapsed } from "../utils/formatters";
 
-const formatTime = (mins) => {
-  const d = Math.floor(mins / 1440).toString().padStart(2, '0');
-  const h = Math.floor((mins % 1440) / 60).toString().padStart(2, '0');
-  const m = (mins % 60).toString().padStart(2, '0');
-  return `${d}:${h}:${m}`;
-};
 export default function BillingDashboard() {
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState({
@@ -191,7 +186,7 @@ export default function BillingDashboard() {
                 <div className="mt-md flex justify-between items-end ml-sm">
                   <div>
                     <p className="font-body-md text-on-surface font-medium">{order.customer_name}</p>
-                    <p className="text-sm text-on-surface-variant mt-xs">{order.items.length} Items • {formatTime(mins)} ago</p>
+                    <p className="text-sm text-on-surface-variant mt-xs">{order.items.length} Items • {formatElapsed(order.created_at)}</p>
                   </div>
                   <div className="flex gap-sm">
                     <span className="px-3 py-1 bg-primary-fixed rounded-full text-on-primary-fixed text-xs font-bold flex items-center gap-1 uppercase">

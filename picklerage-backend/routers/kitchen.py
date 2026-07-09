@@ -20,14 +20,14 @@ def get_kitchen_orders():
         "ready": []
     }
     
-    now = datetime.utcnow().replace(tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
     
     for order in response.data:
         status = order["status"]
         
         # Calculate elapsed seconds
         created_at = datetime.fromisoformat(order["created_at"].replace("Z", "+00:00"))
-        elapsed_seconds = int((now - created_at).total_seconds())
+        elapsed_seconds = max(0, int((now - created_at).total_seconds()))
         
         # Format table number
         table_number = None

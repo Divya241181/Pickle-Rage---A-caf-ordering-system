@@ -36,12 +36,12 @@ def get_billing_orders():
     
     response = supabase.table("orders").select("*, table_sessions(tables(table_number)), payments(*), order_items(*, menu_items(name))").gte("created_at", today).order("created_at", desc=True).execute()
     
-    now = datetime.utcnow().replace(tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
     formatted_orders = []
     
     for order in response.data:
         created_at = datetime.fromisoformat(order["created_at"].replace("Z", "+00:00"))
-        elapsed_seconds = int((now - created_at).total_seconds())
+        elapsed_seconds = max(0, int((now - created_at).total_seconds()))
         
         table_number = None
         if order.get("table_sessions") and order["table_sessions"].get("tables"):

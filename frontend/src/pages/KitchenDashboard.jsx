@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
 import { useOrdersRealtime } from "../hooks/useRealtime";
+import { formatElapsed } from "../utils/formatters";
 
-const formatTime = (mins) => {
-  const d = Math.floor(mins / 1440).toString().padStart(2, '0');
-  const h = Math.floor((mins % 1440) / 60).toString().padStart(2, '0');
-  const m = (mins % 60).toString().padStart(2, '0');
-  return `${d}:${h}:${m}`;
-};
 const OrderCard = ({ order, onAction, actionLabel, actionColor }) => {
   const mins = Math.floor(order.elapsed_seconds / 60);
   
   let borderColor = "border-emerald-500";
-  let timeColor = "text-on-surface-variant";
   
   if (mins >= 20) {
     borderColor = "border-red-500";
-    timeColor = "text-red-400 font-bold";
   } else if (mins >= 10) {
     borderColor = "border-amber-500";
-    timeColor = "text-amber-400 font-bold";
   }
 
   return (
@@ -55,11 +47,15 @@ const OrderCard = ({ order, onAction, actionLabel, actionColor }) => {
           ))}
         </div>
         
-        <div className="flex items-center justify-between mt-md">
-          <span className={`${timeColor} text-sm flex items-center gap-1`}>
-            <span className="material-symbols-outlined text-[18px]">schedule</span>
-            {formatTime(mins)} ago
+        <div className="flex justify-between items-center text-xs text-on-surface-variant mb-md font-medium mt-md">
+          <span>{order.items.length} items</span>
+          <span className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">schedule</span>
+            {formatElapsed(order.created_at)}
           </span>
+        </div>
+
+        <div className="flex items-center justify-between">
           {onAction ? (
             <button onClick={() => onAction(order)} className={`h-12 text-white font-bold px-lg rounded-full transition-all active:scale-95 ${actionColor}`}>
               {actionLabel}
