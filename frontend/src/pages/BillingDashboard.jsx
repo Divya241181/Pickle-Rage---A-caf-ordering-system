@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
-import { useOrdersRealtime } from "../hooks/useRealtime";
+import { useOrdersRealtime, useWaiterCallsRealtime } from "../hooks/useRealtime";
 import { formatElapsed } from "../utils/formatters";
 
 export default function BillingDashboard() {
@@ -16,12 +16,14 @@ export default function BillingDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [filter, setFilter] = useState('All');
+  const [waiterCalls, setWaiterCalls] = useState([]);
 
   const fetchData = async () => {
     try {
-      const [ordersRes, statsRes] = await Promise.all([
+      const [ordersRes, statsRes, callsRes] = await Promise.all([
         api.getBillingOrders(),
-        api.getBillingStats()
+        api.getBillingStats(),
+        api.getWaiterCalls()
       ]);
       const rawOrders = ordersRes.data;
       const groupedOrders = [];
@@ -49,6 +51,7 @@ export default function BillingDashboard() {
 
       setOrders(groupedOrders);
       setStats(statsRes.data);
+      setWaiterCalls(callsRes.data.filter(c => c.status === 'pending'));
       
       // Update selected order if it still exists
       if (selectedOrder) {
@@ -66,6 +69,41 @@ export default function BillingDashboard() {
 
   useOrdersRealtime(() => {
     fetchData();
+  });
+
+  const playNotificationSound = () => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.3);
+      
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  useWaiterCallsRealtime((payload) => {
+    if (payload.eventType === 'INSERT') {
+      playNotificationSound();
+      setWaiterCalls(prev => [payload.new, ...prev]);
+    } else if (payload.eventType === 'UPDATE') {
+      if (payload.new.status !== 'pending') {
+        setWaiterCalls(prev => prev.filter(c => c.id !== payload.new.id));
+      }
+    }
   });
 
   const handlePayment = async () => {
@@ -134,6 +172,40 @@ export default function BillingDashboard() {
           </button>
 
           <div className="mt-lg pt-md border-t border-outline-variant px-md">
+            <div className="flex justify-between items-center mb-sm">
+              <p className="text-[11px] uppercase tracking-wider text-outline font-bold">Waiter Calls</p>
+              {waiterCalls.length > 0 && <span className="bg-error text-on-error text-[10px] font-bold px-1.5 py-0.5 rounded-full">{waiterCalls.length}</span>}
+            </div>
+            <div className="space-y-sm mb-lg">
+              {waiterCalls.map(call => {
+                const isBill = call.reason?.toLowerCase().includes('bill');
+                const isWater = call.reason?.toLowerCase().includes('water');
+                const bgClass = isBill ? 'bg-error-container text-on-error-container' : isWater ? 'bg-primary-container text-on-primary-container' : 'bg-orange-100 text-orange-900';
+                
+                return (
+                  <div key={call.id} className={`p-sm rounded-lg ${bgClass}`}>
+                    <div className="flex justify-between items-start mb-xs">
+                      <span className="font-bold text-xs tracking-tight">Table {call.table_number}</span>
+                      <span className="text-[10px] opacity-80">{formatElapsed(call.created_at)}</span>
+                    </div>
+                    <p className="text-xs mb-sm font-medium">{call.reason}</p>
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await api.acknowledgeWaiterCall(call.id);
+                          setWaiterCalls(prev => prev.filter(c => c.id !== call.id));
+                        } catch(e) { console.error(e); }
+                      }}
+                      className="w-full py-1 bg-surface/50 hover:bg-surface/80 rounded text-[10px] font-bold uppercase transition-colors"
+                    >
+                      Acknowledge
+                    </button>
+                  </div>
+                );
+              })}
+              {waiterCalls.length === 0 && <p className="text-xs text-on-surface-variant italic">No pending calls</p>}
+            </div>
+
             <p className="text-[11px] uppercase tracking-wider text-outline font-bold mb-sm">Today's Overview</p>
             <div className="space-y-sm">
               <div className="flex justify-between items-center">
@@ -157,6 +229,16 @@ export default function BillingDashboard() {
       <main className="flex-1 flex flex-col h-full bg-surface overflow-hidden relative pt-[60px] md:pt-0">
         <header className="p-md md:p-lg flex flex-col sm:flex-row gap-md justify-between items-start sm:items-center bg-surface z-10">
           <h2 className="font-headline-md text-on-surface hidden md:block">{filter} Orders</h2>
+          <div className="flex items-center gap-md ml-auto">
+            <div className="relative">
+              <span className="material-symbols-outlined text-outline cursor-pointer text-3xl">notifications</span>
+              {waiterCalls.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-error text-on-error text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface">
+                  {waiterCalls.length}
+                </span>
+              )}
+            </div>
+          </div>
         </header>
 
         <div className="flex-1 overflow-y-auto p-md md:p-lg space-y-sm hide-scrollbar">

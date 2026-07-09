@@ -16,3 +16,18 @@ export function useOrdersRealtime(onUpdate) {
     };
   }, [onUpdate]);
 }
+export function useWaiterCallsRealtime(onUpdate) {
+  useEffect(() => {
+    const channel = supabase
+      .channel('waitercalls-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'waiter_calls' },
+        (payload) => onUpdate(payload)
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [onUpdate]);
+}
