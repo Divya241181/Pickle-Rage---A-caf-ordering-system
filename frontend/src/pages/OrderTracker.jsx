@@ -45,6 +45,38 @@ export default function OrderTracker() {
     };
   }, [orderId]);
 
+  const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    if (!order?.session_id) return;
+    const channel = supabase
+      .channel(`session-${order.session_id}`)
+      .on('postgres_changes',
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'table_sessions',
+          filter: `id=eq.${order.session_id}`
+        },
+        (payload) => {
+          if (payload.new.status === 'closed') {
+            sessionStorage.removeItem('session_id');
+            sessionStorage.removeItem('table_number');
+            sessionStorage.removeItem('cart');
+            setToastMessage('Your bill has been settled. Thank you!');
+            setTimeout(() => {
+              window.location.href = '/?t=' + (sessionStorage.getItem('qr_token') || '');
+            }, 4000);
+          }
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [order?.session_id]);
+
   if (loading) return <div className="p-10 text-center">Loading...</div>;
   if (!order) return <div className="p-10 text-center">Order not found</div>;
 
@@ -166,6 +198,12 @@ export default function OrderTracker() {
           <span className="font-label-sm text-label-sm mt-xs">My Order</span>
         </a>
       </nav>
+
+      {toastMessage && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-md py-sm rounded-lg shadow-elevation-2 z-50 animate-in fade-in slide-in-from-bottom-5">
+          {toastMessage}
+        </div>
+      )}
     </>
   );
 }

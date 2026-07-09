@@ -18,14 +18,36 @@ def process_order_completion(order_id: str):
     
     if order.get("order_type") == "dine_in" and order.get("session_id"):
         session_id = order["session_id"]
-        uncompleted = supabase.table("orders").select("id").eq("session_id", session_id).neq("status", "completed").neq("status", "cancelled").execute()
         
-        if not uncompleted.data:
-            supabase.table("table_sessions").update({"status": "closed", "closed_at": datetime.utcnow().isoformat()}).eq("id", session_id).execute()
+        # Check if all orders in session are done
+        remaining = supabase.table("orders")\
+            .select("id")\
+            .eq("session_id", session_id)\
+            .in_("status", ["pending", "accepted", "preparing", "ready", "served"])\
+            .execute()
+        
+        if len(remaining.data) == 0:
+            # Close the session
+            supabase.table("table_sessions")\
+                .update({"status": "closed", "closed_at": datetime.utcnow().isoformat()})\
+                .eq("id", session_id)\
+                .execute()
+            
+            # Reset table to available
             session = supabase.table("table_sessions").select("table_id").eq("id", session_id).execute()
             if session.data:
                 table_id = session.data[0]["table_id"]
-                supabase.table("tables").update({"status": "available"}).eq("id", table_id).execute()
+                supabase.table("tables")\
+                    .update({"status": "available"})\
+                    .eq("id", table_id)\
+                    .execute()
+            
+            # Acknowledge all pending waiter calls for this session
+            supabase.table("waiter_calls")\
+                .update({"status": "acknowledged"})\
+                .eq("session_id", session_id)\
+                .eq("status", "pending")\
+                .execute()
                 
     return order
 

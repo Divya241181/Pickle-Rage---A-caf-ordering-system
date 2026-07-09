@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { parseQRParams } from "../utils/qr";
 import { CartContext } from "../context/CartContext";
 import * as api from "../services/api";
+import { useSessionRealtime } from "../hooks/useRealtime";
 import HeroHeader from "../components/menu/HeroHeader";
 import MenuItemCard from "../components/menu/MenuItemCard";
 import CartBar from "../components/menu/CartBar";
@@ -27,6 +28,22 @@ export default function CustomerMenu({ tableInfo, session }) {
       if (cats.length > 0) setActiveCategory(cats[0].id);
     }).catch(err => console.error("Failed to load menu", err));
   }, []);
+
+  const handleSessionClosed = () => {
+    // Clear all session data
+    sessionStorage.removeItem('session_id');
+    sessionStorage.removeItem('table_number');
+    sessionStorage.removeItem('cart');
+    
+    // Show a friendly message
+    // Then redirect to fresh menu after 3 seconds
+    showToast('Thank you for dining with us! 👋');
+    setTimeout(() => {
+      window.location.href = window.location.pathname + window.location.search;
+    }, 3000);
+  };
+
+  useSessionRealtime(session?.id, handleSessionClosed);
 
   useEffect(() => {
     const handleScroll = () => {

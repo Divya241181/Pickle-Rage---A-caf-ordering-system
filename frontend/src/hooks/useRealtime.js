@@ -46,3 +46,29 @@ export function useTableSessionsRealtime(onUpdate) {
     };
   }, [onUpdate]);
 }
+
+export function useSessionRealtime(sessionId, onSessionClosed) {
+  useEffect(() => {
+    if (!sessionId) return;
+    const channel = supabase
+      .channel(`session-${sessionId}`)
+      .on('postgres_changes',
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'table_sessions',
+          filter: `id=eq.${sessionId}`
+        },
+        (payload) => {
+          if (payload.new.status === 'closed') {
+            onSessionClosed();
+          }
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sessionId, onSessionClosed]);
+}

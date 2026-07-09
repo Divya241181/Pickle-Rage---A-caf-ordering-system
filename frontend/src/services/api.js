@@ -7,7 +7,10 @@ const api = axios.create({
 export const getMenu = () => api.get('/api/menu/');
 export const verifyTable = (token) => api.get(`/api/tables/verify?token=${token}`);
 export const verifyTableByNumber = (tableNumber) => api.get(`/api/tables/verify/number/${tableNumber}`);
+
 export const createSession = (data) => api.post('/api/sessions/', data);
+export const getSessionStatus = (sessionId) => api.get(`/api/sessions/${sessionId}/status`);
+
 export const placeOrder = (data) => api.post('/api/orders/', data);
 export const getOrderStatus = (orderId) => api.get(`/api/orders/${orderId}/status`);
 export const getSessionOrders = (sessionId) => api.get(`/api/orders/session/${sessionId}`);
