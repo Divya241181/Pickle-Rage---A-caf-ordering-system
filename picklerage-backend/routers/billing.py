@@ -154,3 +154,68 @@ def get_billing_stats():
         "dine_in_count": dine_in,
         "takeout_count": takeout
     }
+
+@router.get("/tables")
+def get_tables():
+    # 1. Get all tables
+    tables_res = supabase.table("tables").select("*").order("table_number").execute()
+    tables = tables_res.data
+    
+    # 2. Get active sessions
+    sessions_res = supabase.table("table_sessions").select("*").eq("status", "active").execute()
+    sessions = {s["table_id"]: s for s in sessions_res.data}
+    
+    # 3. For all active sessions, get orders and waiter calls
+    session_ids = [s["id"] for s in sessions.values()]
+    orders = []
+    calls = []
+    if session_ids:
+        orders_res = supabase.table("orders").select("session_id, total, status").in_("session_id", session_ids).neq("status", "cancelled").execute()
+        orders = orders_res.data
+        
+        calls_res = supabase.table("waiter_calls").select("session_id, call_type, status").in_("session_id", session_ids).eq("status", "pending").execute()
+        calls = calls_res.data
+
+    result = []
+    now = datetime.now(timezone.utc)
+    for t in tables:
+        session = sessions.get(t["id"])
+        if session:
+            s_orders = [o for o in orders if o["session_id"] == session["id"]]
+            s_calls = [c for c in calls if c["session_id"] == session["id"]]
+            
+            try:
+                started_at = datetime.fromisoformat(session["started_at"].replace("Z", "+00:00"))
+                elapsed_minutes = max(0, int((now - started_at).total_seconds() / 60))
+            except Exception:
+                elapsed_minutes = 0
+            
+            has_ready = any(o["status"] == "ready" for o in s_orders)
+            has_bill = any(c["call_type"] == "bill" for c in s_calls)
+            total = sum(o["total"] for o in s_orders)
+            
+            result.append({
+                "table_number": t["table_number"],
+                "status": "occupied",
+                "session_id": session["id"],
+                "customer_name": session["customer_name"],
+                "session_total": total,
+                "session_started_at": session["started_at"],
+                "elapsed_minutes": elapsed_minutes,
+                "has_ready_orders": has_ready,
+                "has_bill_request": has_bill
+            })
+        else:
+            result.append({
+                "table_number": t["table_number"],
+                "status": "available",
+                "session_id": None,
+                "customer_name": None,
+                "session_total": 0,
+                "session_started_at": None,
+                "elapsed_minutes": 0,
+                "has_ready_orders": False,
+                "has_bill_request": False
+            })
+            
+    return result
