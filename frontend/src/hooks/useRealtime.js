@@ -31,3 +31,18 @@ export function useWaiterCallsRealtime(onUpdate) {
     };
   }, [onUpdate]);
 }
+export function useTableSessionsRealtime(onUpdate) {
+  useEffect(() => {
+    const channel = supabase
+      .channel('tablesessions-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'table_sessions' },
+        (payload) => onUpdate(payload)
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [onUpdate]);
+}

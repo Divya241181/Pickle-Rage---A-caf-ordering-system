@@ -18,6 +18,7 @@ export const updateKitchenStatus = (orderId, status) => api.patch(`/api/kitchen/
 
 export const getBillingOrders = () => api.get('/api/billing/orders');
 export const getBillingStats = () => api.get('/api/billing/stats');
+export const getBillingTables = () => api.get('/api/billing/tables');
 export const confirmPayment = (orderId, data) => api.post(`/api/billing/${orderId}/payment`, data);
 export const completeOrder = (orderId) => api.patch(`/api/billing/${orderId}/complete`);
 export const updateBillingStatus = (orderId, status) => api.patch(`/api/billing/orders/${orderId}/status`, { status });

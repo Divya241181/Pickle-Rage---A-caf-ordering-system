@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as api from "../services/api";
-import { useOrdersRealtime, useWaiterCallsRealtime } from "../hooks/useRealtime";
+import { useOrdersRealtime, useWaiterCallsRealtime, useTableSessionsRealtime } from "../hooks/useRealtime";
 import { formatElapsed } from "../utils/formatters";
 
 export default function BillingDashboard() {
@@ -17,13 +17,16 @@ export default function BillingDashboard() {
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [filter, setFilter] = useState('All');
   const [waiterCalls, setWaiterCalls] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [activeTableFilter, setActiveTableFilter] = useState(null);
 
   const fetchData = async () => {
     try {
-      const [ordersRes, statsRes, callsRes] = await Promise.all([
+      const [ordersRes, statsRes, callsRes, tablesRes] = await Promise.all([
         api.getBillingOrders(),
         api.getBillingStats(),
-        api.getWaiterCalls()
+        api.getWaiterCalls(),
+        api.getBillingTables()
       ]);
       const rawOrders = ordersRes.data;
       const groupedOrders = [];
@@ -52,6 +55,7 @@ export default function BillingDashboard() {
       setOrders(groupedOrders);
       setStats(statsRes.data);
       setWaiterCalls(callsRes.data.filter(c => c.status === 'pending'));
+      setTables(tablesRes.data);
       
       // Update selected order if it still exists
       if (selectedOrder) {
@@ -68,6 +72,10 @@ export default function BillingDashboard() {
   }, []);
 
   useOrdersRealtime(() => {
+    fetchData();
+  });
+
+  useTableSessionsRealtime(() => {
     fetchData();
   });
 
@@ -124,6 +132,8 @@ export default function BillingDashboard() {
   };
 
   const filteredOrders = orders.filter(o => {
+    if (activeTableFilter && o.table_number !== activeTableFilter) return false;
+    if (filter === 'Tables') return false; // Orders not shown directly in Tables view unless filter changes
     if (filter === 'All') return o.status !== 'completed' && o.status !== 'cancelled';
     if (filter === 'Completed') return o.status === 'completed';
     if (filter === 'New') return o.status === 'pending' || o.status === 'accepted';
@@ -167,8 +177,11 @@ export default function BillingDashboard() {
               <span className="material-symbols-outlined">room_service</span> Ready
             </div>
           </button>
-          <button onClick={() => setFilter('Completed')} className={`w-full flex items-center gap-md rounded-lg px-md py-sm transition-transform font-label-md ${filter==='Completed'?'bg-primary-container text-on-primary-container':'text-on-surface-variant hover:bg-surface-variant'}`}>
+          <button onClick={() => { setFilter('Completed'); setActiveTableFilter(null); }} className={`w-full flex items-center gap-md rounded-lg px-md py-sm transition-transform font-label-md ${filter==='Completed'?'bg-primary-container text-on-primary-container':'text-on-surface-variant hover:bg-surface-variant'}`}>
             <span className="material-symbols-outlined">check_circle</span> Completed
+          </button>
+          <button onClick={() => { setFilter('Tables'); setActiveTableFilter(null); }} className={`w-full flex items-center gap-md rounded-lg px-md py-sm transition-transform font-label-md ${filter==='Tables'?'bg-primary-container text-on-primary-container':'text-on-surface-variant hover:bg-surface-variant'}`}>
+            <span className="material-symbols-outlined">grid_view</span> Tables
           </button>
 
           <div className="mt-lg pt-md border-t border-outline-variant px-md">
@@ -247,8 +260,63 @@ export default function BillingDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-md md:p-lg space-y-sm hide-scrollbar">
-          {filteredOrders.map(order => {
+        <div className="flex-1 overflow-y-auto p-md md:p-lg hide-scrollbar flex flex-col">
+          {activeTableFilter && filter !== 'Tables' && (
+            <div className="mb-md flex justify-between items-center bg-primary-container/30 px-sm py-xs rounded-lg border border-primary/20">
+              <span className="text-sm font-medium text-primary">Filtering by Table {activeTableFilter}</span>
+              <button onClick={() => setActiveTableFilter(null)} className="text-xs text-on-surface-variant hover:text-error underline">Clear Filter</button>
+            </div>
+          )}
+
+          {filter === 'Tables' ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md content-start">
+              {tables.map(table => {
+                let bgClass = "bg-surface-container-lowest border border-success/30";
+                let textClass = "text-on-surface-variant";
+                let statusLabel = "Available";
+                
+                if (table.has_bill_request) {
+                  bgClass = "bg-error text-on-error border border-error";
+                  textClass = "text-on-error";
+                  statusLabel = "Bill Requested";
+                } else if (table.has_ready_orders) {
+                  bgClass = "bg-amber-400 text-amber-950 border border-amber-500";
+                  textClass = "text-amber-900";
+                  statusLabel = "Food Ready";
+                } else if (table.status === 'occupied') {
+                  bgClass = "bg-primary text-on-primary border border-primary";
+                  textClass = "text-primary-container";
+                  statusLabel = "OCCUPIED";
+                }
+
+                return (
+                  <div 
+                    key={table.table_number}
+                    onClick={() => {
+                      if (table.status === 'occupied') {
+                        setActiveTableFilter(table.table_number);
+                        setFilter('All');
+                      }
+                    }}
+                    className={`rounded-xl p-md shadow-sm transition-transform hover:-translate-y-1 cursor-pointer flex flex-col items-center justify-center text-center h-32 ${bgClass}`}
+                  >
+                    <h3 className="font-headline-md font-bold mb-xs">Table {table.table_number}</h3>
+                    {table.status === 'occupied' ? (
+                      <>
+                        <span className="text-[10px] font-bold tracking-widest uppercase mb-1">{statusLabel}</span>
+                        <p className="text-sm font-medium truncate w-full">{table.customer_name}</p>
+                        <p className={`text-xs mt-auto ${textClass}`}>₹{table.session_total} • {table.elapsed_minutes}m</p>
+                      </>
+                    ) : (
+                      <span className="text-sm font-bold text-success tracking-widest uppercase mt-sm">{statusLabel}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="space-y-sm flex-1">
+              {filteredOrders.map(order => {
             const mins = Math.floor(order.elapsed_seconds / 60);
             const isSelected = selectedOrder?.id === order.id;
             
@@ -291,6 +359,8 @@ export default function BillingDashboard() {
               </div>
             )
           })}
+            </div>
+          )}
         </div>
       </main>
 
